@@ -619,7 +619,7 @@ function applyRemote(m){if(same(m,state))return;
   let fresh=[];if(me){const f=other(me);for(let d=1;d<=30;d++){const a=entry(d,f),b=(m.days[d]&&m.days[d][f])||{};if(b.n&&b.n.trim()&&(b.nt||0)>(a.nt||0)&&!notified.has(d)){fresh.push(d)}}}
   state=m;saveLocal();safeRender();
   if(fresh.length&&!booting){fresh.forEach(d=>notified.add(d));const d=fresh[fresh.length-1],t=entry(d,other(me)).n.trim();SFX.bzzt();toast(`Neuer Eintrag von ${nm(other(me))}`,`Tag ${d}: ${t.length>90?t.slice(0,90)+" …":t}`)}}
-function markSaved(){document.querySelectorAll(".saved[data-pending]").forEach(el=>{el.removeAttribute("data-pending");el.textContent="✓ gespeichert & synchronisiert"})}
+function markSaved(){document.querySelectorAll(".saved[data-pending]").forEach(el=>{el.removeAttribute("data-pending");el.textContent=me?`✓ Gespeichert – ${nm(other(me))} sieht diesen Eintrag`:"✓ Gespeichert"})}
 
 /* ================= Rendering ================= */
 const IC={
@@ -783,7 +783,7 @@ function vDay(){
      ${canCheck?`<div class="seg"><button class="btn ok ${e.s==="clean"?"on":""}" data-act="st" data-p="${p}" data-s="clean">✓ Standhaft</button><button class="btn bad ${e.s==="relapse"?"on":""}" data-act="st" data-p="${p}" data-s="relapse">✗ Rückfall</button></div>
      ${!e.s&&d<T?'<div class="hint">Nicht eingetragen – zählt automatisch als geschafft.</div>':""}`:`<div class="hint">${T===0?"Eintragen ab 1. November.":"Eintragen ab "+dlong(d)+"."}</div>`}
      <textarea id="note-${d}-${p}" data-act="note" data-p="${p}" placeholder="Gedanken zu Tag ${d} – wie lief's? Was war schwer, was hat geholfen?">${esc(e.n)}</textarea>
-     <div class="saved" id="saved-${d}-${p}"></div></section>`}
+     <div class="saved" id="saved-${d}-${p}">${e.n&&e.n.trim()?(me?`✓ Gespeichert – ${esc(nm(other(me)))} sieht diesen Eintrag`:"✓ Gespeichert"):"Wird automatisch gespeichert – kein Absenden nötig."}</div></section>`}
   return h}
 
 function vLog(){
