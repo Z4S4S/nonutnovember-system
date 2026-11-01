@@ -1,0 +1,6 @@
+[build]
+  publish = "public"
+  command = "echo kein Build noetig"
+
+[functions]
+  directory = "netlify/functions"
