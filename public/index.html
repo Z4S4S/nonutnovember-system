@@ -317,6 +317,22 @@ textarea:focus,.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-
 .tab{position:relative}
 .tab .cnt{position:absolute;top:2px;right:calc(50% - 22px);min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--bad);color:#fff;font-size:10.5px;letter-spacing:0;display:grid;place-items:center;box-shadow:0 0 10px color-mix(in srgb,var(--bad) 60%,transparent)}
 .feed .msg{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ===== Topf & Ehrenkodex ===== */
+.pot{border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}
+.potbig{text-align:center;font-family:var(--fh);font-weight:700;font-size:58px;line-height:1;letter-spacing:.02em;margin:6px 0 4px;color:var(--text);text-shadow:0 0 22px color-mix(in srgb,var(--bad) 35%,transparent)}
+.potbig small{font-size:26px;color:var(--muted)}
+.potrow{margin-top:14px}
+.potrow .potamt{font-family:var(--fh);font-size:20px}
+.potrow .potamt::after{content:" €";font-size:14px;color:var(--muted)}
+.potmsg{text-align:center;border:1px solid color-mix(in srgb,var(--bad) 55%,transparent);background:color-mix(in srgb,var(--bad) 10%,transparent);border-radius:8px;padding:10px;margin:8px 0 10px}
+.potmsg b{font-family:var(--fh);font-size:30px;color:var(--bad);display:block;line-height:1.1}
+.rcrow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rcctl{display:inline-flex;align-items:center;gap:8px}
+.rcctl b{font-family:var(--fh);font-size:20px;min-width:30px;text-align:center}
+.pactlist{margin:0;padding-left:20px;line-height:1.55}
+.pactlist li{margin-top:4px}
+.pactlist .pactbig{font-family:var(--fh);font-weight:700;font-size:19px;letter-spacing:.04em;text-transform:uppercase;color:var(--bad);margin-top:8px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -515,30 +531,34 @@ function now(){const d=qs.get("debugDate");if(d){const a=d.split("-").map(Number
 
 /* ================= Zustand ================= */
 let roomId=null, me=null, state=null, view="status", selDay=1, logFilter="all", syncState="idle", dirty=false, pendingRender=false, lastT=-1;
-function blank(){return{v:1,year:now().getFullYear(),names:{p1:{v:"",t:0},p2:{v:"",t:0}},days:{}}}
+function blank(){return norm({})}
 function norm(s){
   s=(s&&typeof s==="object")?s:{};
   const o={v:1,year:Number.isInteger(s.year)?s.year:now().getFullYear(),names:{},days:{}};
+  const c=(s.cfg&&typeof s.cfg==="object")?s.cfg:{};o.cfg={base:Number.isFinite(+c.base)&&c.base!==""&&c.base!=null?Math.max(0,Math.min(10000,Math.round(+c.base))):50,per:Number.isFinite(+c.per)&&c.per!==""&&c.per!=null?Math.max(0,Math.min(10000,Math.round(+c.per))):50,t:+c.t||0};
+  o.pact={};for(const p of P){const x=s.pact&&s.pact[p];o.pact[p]={t:(x&&+x.t)||0}}
   for(const p of P){const x=s.names&&s.names[p];o.names[p]=(x&&typeof x==="object")?{v:String(x.v||"").slice(0,40),t:+x.t||0}:{v:"",t:0}}
   if(s.days&&typeof s.days==="object")for(const k in s.days){const d=+k;if(!(d>=1&&d<=30))continue;const src=s.days[k]||{};const e={};
-    for(const p of P){const x=src[p];if(x&&typeof x==="object")e[p]={s:(x.s==="clean"||x.s==="relapse")?x.s:null,st:+x.st||0,n:typeof x.n==="string"?x.n:"",nt:+x.nt||0,ri:+x.ri||0,rw:+x.rw||0}}
+    for(const p of P){const x=src[p];if(x&&typeof x==="object"){const st=(x.s==="clean"||x.s==="relapse")?x.s:null;e[p]={s:st,st:+x.st||0,n:typeof x.n==="string"?x.n:"",nt:+x.nt||0,ri:+x.ri||0,rw:+x.rw||0,rc:st==="relapse"?Math.max(1,Math.min(99,Math.round(+x.rc||1))):0}}}
     o.days[d]=e}
   return o}
 function merge(a,b){
   a=norm(a);b=norm(b);const o=norm(a);
   for(const p of P)if(b.names[p].t>a.names[p].t)o.names[p]=b.names[p];
+  if(b.cfg.t>a.cfg.t)o.cfg=b.cfg;
+  for(const p of P)o.pact[p]={t:Math.max(a.pact[p].t,b.pact[p].t)};
   const keys=new Set([...Object.keys(a.days),...Object.keys(b.days)]);
   for(const k of keys){o.days[k]={};for(const p of P){const ea=a.days[k]&&a.days[k][p],eb=b.days[k]&&b.days[k][p];if(!ea&&!eb)continue;
     const E={s:null,st:0,n:"",nt:0},A=ea||E,B=eb||E;
     const S=B.st>A.st?B:A, N=B.nt>A.nt?B:A;
-    o.days[k][p]={s:S.s,st:S.st,n:N.n,nt:N.nt,ri:Math.max(A.ri||0,B.ri||0),rw:Math.max(A.rw||0,B.rw||0)}}}
+    o.days[k][p]={s:S.s,st:S.st,n:N.n,nt:N.nt,ri:Math.max(A.ri||0,B.ri||0),rw:Math.max(A.rw||0,B.rw||0),rc:S.s==="relapse"?Math.max(1,S.rc||1):0}}}
   return o}
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 function saveLocal(){if(roomId)ls.set(K.st(roomId),JSON.stringify(state))}
 function loadLocal(id){try{const r=ls.get(K.st(id));return r?norm(JSON.parse(r)):null}catch(e){return null}}
 function nm(p){const v=state.names[p].v.trim();return v||(p==="p1"?"Spieler 1":"Spieler 2")}
-function entry(d,p){return(state.days[d]&&state.days[d][p])||{s:null,st:0,n:"",nt:0,ri:0,rw:0}}
-function upd(d,p,patch){state.days[d]=state.days[d]||{};state.days[d][p]=Object.assign({s:null,st:0,n:"",nt:0,ri:0,rw:0},state.days[d][p],patch);saveLocal();schedulePush()}
+function entry(d,p){return(state.days[d]&&state.days[d][p])||{s:null,st:0,n:"",nt:0,ri:0,rw:0,rc:0}}
+function upd(d,p,patch){state.days[d]=state.days[d]||{};state.days[d][p]=Object.assign({s:null,st:0,n:"",nt:0,ri:0,rw:0,rc:0},state.days[d][p],patch);saveLocal();schedulePush()}
 
 /* ================= Zeit & Statistik ================= */
 function dayIndex(){const n=now(),y=state.year;if(n<new Date(y,10,1))return 0;if(n>=new Date(y,11,1))return 31;return n.getDate()}
@@ -562,7 +582,7 @@ function counted(p,d,T){const s=entry(d,p).s;return s!=="relapse"&&(d<T||s==="cl
 function calc(p){
   const T=dayIndex(),last=Math.min(T,30);let run=0,best=0,rel=0,clean=0,conf=0,auto=0,bestAfter=0,perf=0,bestPerf=0,both=0;const series=[];
   for(let d=1;d<=last;d++){const e=entry(d,p),s=e.s;
-    if(s==="relapse"){rel++;run=0}else if(d<T||s==="clean"){run++;clean++;if(s==="clean")conf++;else auto++;if(run>best)best=run;if(rel&&run>bestAfter)bestAfter=run}
+    if(s==="relapse"){rel+=Math.max(1,e.rc||1);run=0}else if(d<T||s==="clean"){run++;clean++;if(s==="clean")conf++;else auto++;if(run>best)best=run;if(rel&&run>bestAfter)bestAfter=run}
     if(s==="clean"&&e.n&&e.n.trim()){perf++;if(perf>bestPerf)bestPerf=perf}else if(d<T||s)perf=0;
     if(counted("p1",d,T)&&counted("p2",d,T))both++;
     series.push(run)}
@@ -712,7 +732,7 @@ function vDuel(){
      <div class="hint">Tippe oder fahre über die Kurve für einzelne Tage.</div>`}
   h+=`</section>`;
   // Kopf an Kopf
-  const rows=[["Streak",c1.streak,c2.streak,1],["Bestwert",c1.best,c2.best,1],["Rückfälle",c1.rel,c2.rel,-1],["Einträge",c1.notes,c2.notes,1],["Titel",c1.earned.length,c2.earned.length,1],...ATTRS.map(a=>[a.n,c1.at[a.k],c2.at[a.k],1])];
+  const rows=[["Streak",c1.streak,c2.streak,1],["Bestwert",c1.best,c2.best,1],["Rückfälle",c1.rel,c2.rel,-1],["Einsatz €",potOf("p1").amt,potOf("p2").amt,-1],["Einträge",c1.notes,c2.notes,1],["Titel",c1.earned.length,c2.earned.length,1],...ATTRS.map(a=>[a.n,c1.at[a.k],c2.at[a.k],1])];
   h+=`<section class="win"><div class="win-h"><span><i class="dia"></i>Kopf an Kopf</span></div>
    <div class="h2h" style="margin-top:0"><b style="font-size:11px;letter-spacing:.1em">${esc(nm("p1").slice(0,6).toUpperCase())}</b><span></span><span></span><span></span><b style="font-size:11px;letter-spacing:.1em">${esc(nm("p2").slice(0,6).toUpperCase())}</b></div>
    ${rows.map(([lab,a,b2,dir])=>{const mx=Math.max(a,b2,1),w1=dir*(a-b2)>0,w2=dir*(b2-a)>0;return`<div class="h2h"><b class="${w1?"vw":""}">${a}</b><div class="hb l"><i style="width:${a/mx*100}%"></i></div><span>${lab}</span><div class="hb r"><i style="width:${b2/mx*100}%"></i></div><b class="${w2?"vw":""}">${b2}</b></div>`}).join("")}
@@ -760,7 +780,25 @@ function vFeed(){
   return`<section class="win feed ${f}"><div class="win-h"><span><i class="dia"></i>Funkverkehr</span>${un?`<span class="chip new">${un} neu</span>`:""}</div>
    <div class="who" style="margin-bottom:0"><span class="dot ${f}"></span><h3>${esc(nm(f))}</h3><span class="muted small">Tag ${d0}</span></div>
    <div class="msg">${esc(e.n)}</div><button class="btn block mt12" data-act="tab" data-v="log">Alle Einträge im Logbuch</button></section>`}
-function vStatus(){const order=me==="p2"?["p2","p1"]:["p1","p2"];return vNotice()+`<div class="pgrid">${order.map(vPlayer).join("")}</div>`+vFeed()+vTeaser()+vBadges()+vCalendar()}
+const eur=n=>n.toLocaleString("de-DE")+" €";
+function potOf(p){const c=calc(p);return{rel:c.rel,amt:state.cfg.base+state.cfg.per*c.rel}}
+function potTotal(){return potOf("p1").amt+potOf("p2").amt}
+function vPot(){
+  const T=dayIndex(),a=potOf("p1"),b=potOf("p2"),tot=a.amt+b.amt,base=state.cfg.base,per=state.cfg.per,mx=Math.max(a.amt,b.amt,1);
+  const row=(p,x)=>`<div class="potrow ${p}"><div class="row"><b>${esc(nm(p))}${me===p?' <span class="chip you" style="font-size:9.5px">Du</span>':""}</b><b class="potamt" data-count="${x.amt}">${x.amt}</b></div>
+    <div class="ab"><i style="width:${x.amt/mx*100}%"></i></div><div class="hint" style="margin-top:4px">${eur(base)} Einsatz + ${x.rel} × ${eur(per)} Rückfälle</div></div>`;
+  const canReport=me&&T>=1&&T<=30;
+  return`<section class="win pot"><div class="win-h"><span><i class="dia"></i>Der Topf</span><span class="chip">${T===31?"Abrechnung":"Abrechnung 30.11."}</span></div>
+   <div class="potbig"><span data-count="${tot}">${tot}</span><small> €</small></div>
+   <div class="muted small" style="text-align:center">Davon macht ihr am Ende zusammen etwas Cooles.</div>
+   ${row("p1",a)}${row("p2",b)}
+   ${canReport?`<button class="btn bad block mt16" data-act="report">✗ Rückfall melden (+${eur(per)})</button><div class="hint" style="text-align:center">Für heute, Tag ${T}. Jeder weitere Rückfall kostet ${eur(per)} extra.</div>`:""}</section>`}
+function vPact(){
+  const rows=P.map(p=>{const t=state.pact[p].t;return`<div class="row" style="margin-top:8px"><span><span class="dot ${p}" style="display:inline-block;margin-right:8px"></span><b>${esc(nm(p))}</b></span>${t?`<span class="chip ok">✓ Geschworen ${new Date(t).toLocaleDateString("de-DE")}</span>`:me===p?`<button class="btn sm" data-act="swear">Ich schwöre</button>`:`<span class="chip">Noch offen</span>`}</div>`}).join("");
+  return`<section class="win pact"><div class="win-h"><span><i class="dia"></i>Ehrenkodex</span></div>
+   <ol class="pactlist"><li>Jeder Rückfall wird ehrlich und sofort eingetragen.</li><li>Jeder Einsatz beträgt ${eur(state.cfg.base)}, jeder Rückfall kostet ${eur(state.cfg.per)} extra.</li><li>Am Monatsende zahlt jeder seinen Anteil in den Topf – davon machen wir zusammen etwas Cooles.</li><li class="pactbig">Wer lügt, ist ein Hurensohn.</li></ol>
+   ${rows}</section>`}
+function vStatus(){const order=me==="p2"?["p2","p1"]:["p1","p2"];return vNotice()+vPot()+`<div class="pgrid">${order.map(vPlayer).join("")}</div>`+vFeed()+vTeaser()+vPact()+vBadges()+vCalendar()}
 
 function vDay(){
   const d=selDay,T=dayIndex(),c=CONTENT[d-1],unlocked=d<=Math.max(T,1)||T===31,canCheck=T>=1&&d<=T;
@@ -781,6 +819,7 @@ function vDay(){
     h+=`<section class="win checkin"><div class="win-h"><span><i class="dia"></i>Eintrag</span>${me===p?'<span class="chip you">Du</span>':""}</div>
      <div class="who"><span class="dot ${p}"></span><h3>${esc(nm(p))}</h3></div>
      ${canCheck?`<div class="seg"><button class="btn ok ${e.s==="clean"?"on":""}" data-act="st" data-p="${p}" data-s="clean">✓ Standhaft</button><button class="btn bad ${e.s==="relapse"?"on":""}" data-act="st" data-p="${p}" data-s="relapse">✗ Rückfall</button></div>
+     ${e.s==="relapse"?`<div class="rcrow"><span class="small">Wie oft an diesem Tag?</span><span class="rcctl"><button class="btn sm" data-act="rc" data-p="${p}" data-v="-1" ${e.rc<=1?"disabled":""}>−</button><b>${e.rc||1}×</b><button class="btn sm" data-act="rc" data-p="${p}" data-v="1">+</button></span><span class="chip bad">+${eur((e.rc||1)*state.cfg.per)}</span></div>`:""}
      ${!e.s&&d<T?'<div class="hint">Nicht eingetragen – zählt automatisch als geschafft.</div>':""}`:`<div class="hint">${T===0?"Eintragen ab 1. November.":"Eintragen ab "+dlong(d)+"."}</div>`}
      <textarea id="note-${d}-${p}" data-act="note" data-p="${p}" placeholder="Gedanken zu Tag ${d} – wie lief's? Was war schwer, was hat geholfen?">${esc(e.n)}</textarea>
      <div class="saved" id="saved-${d}-${p}">${e.n&&e.n.trim()?(me?`✓ Gespeichert – ${esc(nm(other(me)))} sieht diesen Eintrag`:"✓ Gespeichert"):"Wird automatisch gespeichert – kein Absenden nötig."}</div></section>`}
@@ -836,6 +875,7 @@ function mWho(){
 function mRelapse(p,d){
   modal(`<div class="win-h"><span><i class="dia"></i>Systemmeldung</span></div>
    <h2>Streak zurückgesetzt</h2>
+   <div class="potmsg"><b>+${eur(state.cfg.per)}</b> für ${esc(nm(p))}<div class="small muted">Anteil jetzt ${eur(potOf(p).amt)} · Topf gesamt ${eur(potTotal())}</div></div>
    <p>${esc(nm(p))}, ein Ausrutscher an Tag ${d} löscht nicht, was du bisher geschafft hast. Entscheidend ist der nächste Schritt – nicht der letzte.</p>
    <div class="tip"><b>Koran</b>${esc(RELAPSE_Q.t)}<div class="src">${esc(RELAPSE_Q.s)}</div></div>
    <div class="tip"><b>Wissenschaft</b>Die gefährlichste Phase ist der Gedanke „Jetzt ist eh alles egal“ (Abstinenzverletzungs-Effekt, Marlatt). Wer den Fehler als einmalig sieht, fängt sich deutlich schneller.</div>
@@ -853,6 +893,7 @@ function mSettings(){
    <div class="field"><label>Synchronisation</label><div class="small">${syncTxt}</div>
     ${roomId!=="local"?`<div class="code mt8">Code: ${esc(roomId)}</div><div class="seg mt8"><button class="btn" data-act="invite">Freund einladen</button><button class="btn" data-act="syncnow">Jetzt syncen</button></div>`:""}
     ${roomId==="local"||syncState==="missing"?`<button class="btn primary block mt8" data-act="mkroom">Gemeinsamen Sync starten</button>`:""}</div>
+   <div class="field"><label>Einsatz (€)</label><div class="seg"><input class="inp" id="cfg-base" type="number" inputmode="numeric" min="0" value="${state.cfg.base}" aria-label="Grundeinsatz pro Person"><input class="inp" id="cfg-per" type="number" inputmode="numeric" min="0" value="${state.cfg.per}" aria-label="Pro Rückfall"></div><div class="hint">Links: Grundeinsatz pro Person · rechts: pro Rückfall</div><button class="btn block mt8" data-act="savecfg">Einsatz speichern</button></div>
    <div class="field"><label>Effekte</label><div class="seg"><button class="btn ${SFX.on?"primary":""}" data-act="snd">Sound ${SFX.on?"an":"aus"}</button><button class="btn ${introOn()?"primary":""}" data-act="intro">Intro ${introOn()?"an":"aus"}</button></div></div>
    <div class="field"><label>Backup</label><div class="seg"><button class="btn" data-act="export">Herunterladen</button><button class="btn" data-act="import">Importieren</button></div><input type="file" id="imp" accept="application/json,.json" hidden></div>
    <div class="field"><button class="linkbtn" data-act="leave">Auf diesem Gerät abmelden</button></div>`)}
@@ -902,10 +943,17 @@ document.addEventListener("click",async ev=>{
   else if(a==="close")closeModal();
   else if(a==="syncnow"){if(roomId&&roomId!=="local"){setSync("busy");await (dirty?push():pull());if($("#modal").innerHTML)mSettings()}}
   else if(a==="st"){const p=b.dataset.p,s=b.dataset.s,d=selDay,cur=entry(d,p).s,val=cur===s?null:s;
-    const before=stats(p);upd(d,p,{s:val,st:Date.now()});const after=stats(p);render();
+    const before=stats(p);upd(d,p,{s:val,st:Date.now(),rc:val==="relapse"?1:0});const after=stats(p);render();
     if(val==="clean"){const T=dayIndex(),df=attrDiff(before,after);if(d===T)lvlUp(p,before.streak,after.streak,rankOf(before.streak).r!==rankOf(after.streak).r,df);else{SFX.open();toast("Bestätigt",`Tag ${d} für ${nm(p)} als standhaft eingetragen.`);if(df.length)statPop(df)}}
     else if(val==="relapse"){SFX.down();mRelapse(p,d)}}
   else if(a==="lf"){logFilter=b.dataset.f;render()}
+  else if(a==="rc"){const p=b.dataset.p,d=selDay,e=entry(d,p);if(e.s!=="relapse")return;const n=Math.max(1,Math.min(99,(e.rc||1)+(+b.dataset.v)));upd(d,p,{rc:n,st:Date.now()});render();if(+b.dataset.v>0){SFX.down();toast(`+${eur(state.cfg.per)} in den Topf`,`${nm(p)}: Anteil jetzt ${eur(potOf(p).amt)} · Topf ${eur(potTotal())}`,"bad")}}
+  else if(a==="report"){const T=dayIndex();if(!me||T<1||T>30)return;
+    if(!b.dataset.armed){b.dataset.armed="1";b.textContent=`Wirklich? Nochmal tippen – +${eur(state.cfg.per)}`;SFX.bzzt();setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=`✗ Rückfall melden (+${eur(state.cfg.per)})`}},4000);return}
+    const e=entry(T,me);if(e.s==="relapse")upd(T,me,{rc:Math.min(99,(e.rc||1)+1),st:Date.now()});else upd(T,me,{s:"relapse",rc:1,st:Date.now()});
+    render();SFX.down();mRelapse(me,T)}
+  else if(a==="swear"){if(!me)return;state.pact[me]={t:Date.now()};saveLocal();schedulePush();SFX.bzzt();render();toast("Ehrenkodex",`${nm(me)} hat geschworen.`)}
+  else if(a==="savecfg"){const bv=Math.max(0,Math.round(+$("#cfg-base").value||0)),pv=Math.max(0,Math.round(+$("#cfg-per").value||0));state.cfg={base:bv,per:pv,t:Date.now()};saveLocal();schedulePush();render();mSettings();toast("Gespeichert",`Einsatz ${eur(bv)} · pro Rückfall ${eur(pv)}`)}
   else if(a==="iam"){me=b.dataset.p;ls.set(K.me(roomId),me);render();if(b.dataset.keep)mSettings();else{closeModal();SFX.open();toast("Identifiziert",`Willkommen, ${nm(me)}.`);setTimeout(newDayCheck,900)}}
   else if(a==="savenames"){const t=Date.now();for(const p of P){const v=$("#n-"+p).value.trim().slice(0,40);if(v!==state.names[p].v)state.names[p]={v,t}}saveLocal();schedulePush();render();mSettings();toast("Gespeichert","Namen aktualisiert.")}
   else if(a==="invite")mShare(false);

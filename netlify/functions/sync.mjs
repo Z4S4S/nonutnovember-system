@@ -898,6 +898,14 @@ var MAX = 4e5;
 function norm(s) {
   s = s && typeof s === "object" ? s : {};
   const o = { v: 1, year: Number.isInteger(s.year) ? s.year : (/* @__PURE__ */ new Date()).getFullYear(), names: {}, days: {} };
+  const c = s.cfg && typeof s.cfg === "object" ? s.cfg : {};
+  const num = (v, d) => Number.isFinite(+v) && v !== "" && v != null ? Math.max(0, Math.min(1e4, Math.round(+v))) : d;
+  o.cfg = { base: num(c.base, 50), per: num(c.per, 50), t: +c.t || 0 };
+  o.pact = {};
+  for (const p of P) {
+    const x = s.pact && s.pact[p];
+    o.pact[p] = { t: x && +x.t || 0 };
+  }
   for (const p of P) {
     const x = s.names && s.names[p];
     o.names[p] = x && typeof x === "object" ? { v: String(x.v || "").slice(0, 40), t: +x.t || 0 } : { v: "", t: 0 };
@@ -910,15 +918,18 @@ function norm(s) {
       const e = {};
       for (const p of P) {
         const x = src[p];
-        if (x && typeof x === "object")
+        if (x && typeof x === "object") {
+          const st = x.s === "clean" || x.s === "relapse" ? x.s : null;
           e[p] = {
-            s: x.s === "clean" || x.s === "relapse" ? x.s : null,
+            s: st,
             st: +x.st || 0,
             n: typeof x.n === "string" ? x.n.slice(0, 5e3) : "",
             nt: +x.nt || 0,
             ri: +x.ri || 0,
-            rw: +x.rw || 0
+            rw: +x.rw || 0,
+            rc: st === "relapse" ? Math.max(1, Math.min(99, Math.round(+x.rc || 1))) : 0
           };
+        }
       }
       o.days[d] = e;
     }
@@ -930,15 +941,17 @@ function merge(a, b) {
   b = norm(b);
   const o = norm(a);
   for (const p of P) if (b.names[p].t > a.names[p].t) o.names[p] = b.names[p];
+  if (b.cfg.t > a.cfg.t) o.cfg = b.cfg;
+  for (const p of P) o.pact[p] = { t: Math.max(a.pact[p].t, b.pact[p].t) };
   const keys = /* @__PURE__ */ new Set([...Object.keys(a.days), ...Object.keys(b.days)]);
   for (const k of keys) {
     o.days[k] = {};
     for (const p of P) {
       const ea = a.days[k] && a.days[k][p], eb = b.days[k] && b.days[k][p];
       if (!ea && !eb) continue;
-      const E = { s: null, st: 0, n: "", nt: 0, ri: 0, rw: 0 }, A = ea || E, B = eb || E;
+      const E = { s: null, st: 0, n: "", nt: 0, ri: 0, rw: 0, rc: 0 }, A = ea || E, B = eb || E;
       const S = B.st > A.st ? B : A, N = B.nt > A.nt ? B : A;
-      o.days[k][p] = { s: S.s, st: S.st, n: N.n, nt: N.nt, ri: Math.max(A.ri || 0, B.ri || 0), rw: Math.max(A.rw || 0, B.rw || 0) };
+      o.days[k][p] = { s: S.s, st: S.st, n: N.n, nt: N.nt, ri: Math.max(A.ri || 0, B.ri || 0), rw: Math.max(A.rw || 0, B.rw || 0), rc: S.s === "relapse" ? Math.max(1, S.rc || 1) : 0 };
     }
   }
   return o;
