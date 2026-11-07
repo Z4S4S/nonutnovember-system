@@ -1,0 +1,14 @@
+{
+  "name": "nnn-tools",
+  "private": true,
+  "type": "module",
+  "description": "Werkzeuge für den NNN-Tracker: Sync-Funktion bauen und lokal testen",
+  "scripts": {
+    "build:fn": "esbuild sync.src.mjs --bundle --platform=node --format=esm --target=node18 --outfile=../netlify/functions/sync.mjs",
+    "dev": "node devserver.mjs"
+  },
+  "devDependencies": {
+    "@netlify/blobs": "11.1.7",
+    "esbuild": "0.28.2"
+  }
+}
