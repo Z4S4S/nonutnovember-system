@@ -22,6 +22,7 @@ Eine Web-App für **No Nut November 2026** zwischen zwei Freunden: **Ahmad** (Nu
 
 - **Topf:** Jeder zahlt 50 € Einsatz. Jeder Rückfall kostet 50 € extra für die Person. Start = 100 €. Am Monatsende wird der Topf gemeinsam für etwas Cooles ausgegeben. Der Einsatz ist **nicht** in der App änderbar (bewusst entfernt).
 - **Ehrenkodex** (Status-Seite), Text bleibt so, inkl. der letzten Zeile „Wer lügt, ist ein Hurensohn.“ – ausdrücklich vom Nutzer gewünscht. Beide gelten als geschworen am 1.11.2026.
+- **Daily Quests** (ab Tag 8 / Woche 2, Abmachung vom 8.11.2026): pro Tag und Spieler 30 Liegestütze, 30 Sit-ups, 30 Squats, 10 Seiten lesen – darf über den Tag verteilt werden. **Nicht alles erledigt = 10 € in den Topf**, höchstens 10 € pro Tag (egal wie viel fehlt). Fällig erst, wenn der Tag vorbei ist. Belohnung: alles erledigt = +1 Level (100 XP); zusätzlich bringt jede Übung über dem Ziel anteilig Bonus-XP: 2× = 25, 3× = 50, 5× = 100 (= 1 Level), linear bis max. 10×. Bonus zählt pro Übung, auch wenn die Quest nicht ganz erfüllt ist. Konstanten `QWEEKS`, `QFINE`, `QBONUS`, `QCAP` in index.html – neue Woche mit anderen Zielen = weiterer Eintrag in `QWEEKS`.
 - Islamische Inhalte: pro Tag ein Koranvers oder Hadith, **sinngemäß übersetzt mit Quellenangabe** (Sure:Vers bzw. Sammlung + Nummer, nur authentische/hasan Hadithe). Wissenschaft: echte Studien mit Quelle, ehrlich formuliert (kleine Studien / nur Zusammenhang als solche benennen).
 
 ## Aufbau
@@ -56,14 +57,17 @@ tools/package.json           npm run build:fn  /  npm run dev
 - `n` = Gedanken/Notiz, `nt` = Zeitstempel der Notiz
 - `ri` / `rw` = Zeitpunkt, an dem Koran/Hadith bzw. Wissenschaft entschlüsselt wurde
 - `rc` = Anzahl Rückfälle an diesem Tag (≥ 1, wenn `s = "relapse"`)
-- Zusammenführen: pro Feldgruppe gewinnt der neuere Zeitstempel (`st` für Status+rc, `nt` für Notiz), `ri/rw` = Maximum, `pact` = Maximum, `cfg`/`names` nach `t`.
+- `q` = Daily-Quest-Stand `{kürzel: Anzahl}` (z. B. `pu` Liegestütze, `su` Sit-ups, `sq` Squats, `rd` Seiten; Schlüssel sortiert, max. 8, Werte 0–1000 – neue Kürzel nimmt der Server ohne Änderung an), `qt` = Zeitstempel
+- Zusammenführen: pro Feldgruppe gewinnt der neuere Zeitstempel (`st` für Status+rc, `nt` für Notiz, `qt` für q), `ri/rw` = Maximum, `pact` = Maximum, `cfg`/`names` nach `t`.
 - **Neue Felder** immer in beiden `norm()` + `merge()` ergänzen, sonst verwirft der Server sie oder die App synct endlos.
 
 ### Funktionen der App
 
-Status-Seite (Countdown, **Topf**, Status-Fenster je Spieler mit Rang E–S, Level = Streak, Attribute Glaube/Wissen/Disziplin/Ausdauer/Reflexion, „Funkverkehr“ mit dem neuesten Eintrag des anderen, Tagesimpuls, Ehrenkodex, 11 Titel/Abzeichen, Kalender) · Tag (verschlüsselte Inhalte zum Antippen, Check-in Standhaft/Rückfall mit Anzahl, Gedanken – eigene editierbar, die des anderen nur lesbar) · Duell (VS, Streak-Kurve, Kopf an Kopf) · Logbuch (Chat-Ansicht, „Neu“-Markierung, rote Zahl am Tab) · Einstellungen (Namen, „Ich bin“, Hell/Dunkel, Sound, Intro, Freund einladen, Backup).
+Status-Seite (Countdown, **Daily Quest** mit Regler + / +10 je Übung, **Topf** = Einsatz + Rückfälle + 10 € je verpasster Quest, Status-Fenster je Spieler mit Rang E–S, Level = Streak, Attribute Glaube/Wissen/Disziplin/Ausdauer/Reflexion, „Funkverkehr“ mit dem neuesten Eintrag des anderen, Tagesimpuls, Ehrenkodex, 11 Titel/Abzeichen, Kalender) · Tag (verschlüsselte Inhalte zum Antippen, Check-in Standhaft/Rückfall mit Anzahl, Gedanken – eigene editierbar, die des anderen nur lesbar) · Duell (VS, Streak-Kurve, Kopf an Kopf) · Logbuch (Chat-Ansicht, „Neu“-Markierung, rote Zahl am Tab) · Einstellungen (Namen, „Ich bin“, Hell/Dunkel, Sound, Intro, Freund einladen, Backup).
 Effekte: Boot-Sequenz, System-Fenster mit Glitch, Level-Up- und Titel-Overlays, WebAudio-Sounds, Partikel.
 Streak-Logik: Vergangene Tage ohne Eintrag zählen automatisch als geschafft; heute zählt erst nach „Standhaft“.
+Level: **LV = Streak + Quest-Level** (Quest-Level = alle Quest-XP / 100, bleibt bei Rückfall erhalten). Rang E–S hängt weiter nur an der Streak. Attribut „Stärke“ = 10 + Wiederholungen/30, „Wissen“ bekommt +1 pro 10 Seiten.
+Kalender: zweite, dünne Balkenreihe = Daily Quest (lila erfüllt, rot = 10 € Strafe). Einmalige Systemmeldung „Daily Quest“ pro Gerät (`nnn.qintro.<id>`), am neuen Tag Hinweis auf Strafe vom Vortag.
 
 ## Änderungen machen
 

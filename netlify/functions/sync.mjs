@@ -895,6 +895,15 @@ var getStore = (input, options) => {
 var P = ["p1", "p2"];
 var ID_RE = /^[A-Za-z0-9_-]{8,48}$/;
 var MAX = 4e5;
+function normQ(q) {
+  const o = {};
+  if (!q || typeof q !== "object") return o;
+  for (const k of Object.keys(q).filter((k2) => /^[a-z]{1,8}$/.test(k2)).sort().slice(0, 8)) {
+    const v = Math.round(+q[k]);
+    o[k] = Number.isFinite(v) ? Math.max(0, Math.min(1e3, v)) : 0;
+  }
+  return o;
+}
 function norm(s) {
   s = s && typeof s === "object" ? s : {};
   const o = { v: 1, year: Number.isInteger(s.year) ? s.year : (/* @__PURE__ */ new Date()).getFullYear(), names: {}, days: {} };
@@ -927,7 +936,9 @@ function norm(s) {
             nt: +x.nt || 0,
             ri: +x.ri || 0,
             rw: +x.rw || 0,
-            rc: st === "relapse" ? Math.max(1, Math.min(99, Math.round(+x.rc || 1))) : 0
+            rc: st === "relapse" ? Math.max(1, Math.min(99, Math.round(+x.rc || 1))) : 0,
+            q: normQ(x.q),
+            qt: +x.qt || 0
           };
         }
       }
@@ -949,9 +960,9 @@ function merge(a, b) {
     for (const p of P) {
       const ea = a.days[k] && a.days[k][p], eb = b.days[k] && b.days[k][p];
       if (!ea && !eb) continue;
-      const E = { s: null, st: 0, n: "", nt: 0, ri: 0, rw: 0, rc: 0 }, A = ea || E, B = eb || E;
-      const S = B.st > A.st ? B : A, N = B.nt > A.nt ? B : A;
-      o.days[k][p] = { s: S.s, st: S.st, n: N.n, nt: N.nt, ri: Math.max(A.ri || 0, B.ri || 0), rw: Math.max(A.rw || 0, B.rw || 0), rc: S.s === "relapse" ? Math.max(1, S.rc || 1) : 0 };
+      const E = { s: null, st: 0, n: "", nt: 0, ri: 0, rw: 0, rc: 0, q: {}, qt: 0 }, A = ea || E, B = eb || E;
+      const S = B.st > A.st ? B : A, N = B.nt > A.nt ? B : A, Q = B.qt > A.qt ? B : A;
+      o.days[k][p] = { s: S.s, st: S.st, n: N.n, nt: N.nt, ri: Math.max(A.ri || 0, B.ri || 0), rw: Math.max(A.rw || 0, B.rw || 0), rc: S.s === "relapse" ? Math.max(1, S.rc || 1) : 0, q: Q.q, qt: Q.qt };
     }
   }
   return o;

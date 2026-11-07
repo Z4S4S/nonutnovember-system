@@ -333,6 +333,66 @@ textarea:focus,.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-
 .pactlist{margin:0;padding-left:20px;line-height:1.55}
 .pactlist li{margin-top:4px}
 .pactlist .pactbig{font-family:var(--fh);font-weight:700;font-size:19px;letter-spacing:.04em;text-transform:uppercase;color:var(--bad);margin-top:8px}
+/* ===== Daily Quest ===== */
+.quest{border-color:color-mix(in srgb,var(--accent2) 45%,var(--line))}
+.q-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:-2px 0 4px}
+.q-t{font-family:var(--fh);font-weight:700;font-size:20px;letter-spacing:.06em;text-transform:uppercase}
+.q-s{font-size:12.5px;color:var(--muted);font-family:var(--fh);letter-spacing:.08em;text-transform:uppercase}
+.q-s b{color:var(--accent);font-size:15px;letter-spacing:.06em;margin-left:4px}
+.qrow{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+.qrow:first-of-type{border-top:0}
+.qh{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.qn{font-family:var(--fh);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.qrow.done .qn{color:var(--ok)}
+.qv b{font-family:var(--fh);font-weight:700;font-size:26px;line-height:1}
+.qv small{font-family:var(--fh);font-size:15px;color:var(--muted)}
+.qrow.done .qv b{color:var(--ok);text-shadow:0 0 12px color-mix(in srgb,var(--ok) 45%,transparent)}
+.qctl{display:flex;align-items:center;gap:7px;margin-top:6px}
+.qb{flex:none;min-width:40px;height:40px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);font-family:var(--fh);font-weight:700;font-size:20px;line-height:1;display:grid;place-items:center;padding:0 6px;transition:transform .12s,filter .12s}
+.qb.w{font-size:14px;letter-spacing:.04em;min-width:46px}
+.qb:active{transform:scale(.92);filter:brightness(1.3)}
+.qb:disabled{opacity:.3}
+.qtrack{position:relative;flex:1;min-width:0;height:40px;display:flex;align-items:center;--th:28px}
+.qtrack .mk{position:absolute;top:9px;bottom:9px;width:2px;margin-left:-1px;background:var(--ok);border-radius:1px;pointer-events:none;opacity:.85;left:calc(var(--th)/2 + (100% - var(--th)) * var(--m))}
+.qtrack .mk.x5{background:var(--accent2)}
+.qr{-webkit-appearance:none;appearance:none;width:100%;height:40px;margin:0;background:transparent;touch-action:pan-y;--fill:calc(var(--th)/2 + (100% - var(--th)) * var(--p))}
+.qr:focus{outline:none}
+.qr::-webkit-slider-runnable-track{height:10px;border-radius:6px;border:1px solid var(--line);background:linear-gradient(90deg,var(--accent) 0,var(--accent2) var(--fill),var(--chip) var(--fill))}
+.qr::-webkit-slider-thumb{-webkit-appearance:none;width:var(--th);height:var(--th);margin-top:calc((10px - 2px - var(--th))/2);border-radius:50%;background:var(--panel-solid);border:2px solid var(--accent);box-shadow:0 0 12px color-mix(in srgb,var(--accent) 70%,transparent)}
+.qr::-moz-range-track{height:10px;border-radius:6px;border:1px solid var(--line);background:var(--chip)}
+.qr::-moz-range-progress{height:10px;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.qr::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--panel-solid);border:2px solid var(--accent)}
+.qrow.done .qr::-webkit-slider-thumb{border-color:var(--ok);box-shadow:0 0 12px color-mix(in srgb,var(--ok) 70%,transparent)}
+.qx{font-size:12px;color:var(--muted);margin-top:2px;min-height:17px}
+.qx .okc{color:var(--ok);font-weight:600}
+.qx .bon{color:var(--accent2);font-weight:600}
+.qsum{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.qsum .xp-l{margin-top:0}
+.qsum .bar i{background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.qrules{display:grid;gap:6px;margin-top:12px;font-size:13px}
+.qrules div{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--panel2)}
+.qrules b{display:block;font-family:var(--fh);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2)}
+.qrules .pen b{color:var(--bad)}
+.qrules .pen.paid{border-color:color-mix(in srgb,var(--bad) 55%,transparent);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.qrules .rew.got{border-color:color-mix(in srgb,var(--ok) 55%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}
+.qrules .rew.got b{color:var(--ok)}
+.qfr{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.qfr .who{display:flex;align-items:center;gap:8px}
+.qfr .who h3{font-size:16px;flex:1}
+.qmini{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:8px}
+.qmini .row{font-size:12px;color:var(--muted);flex-wrap:nowrap}
+.qmini .row b{font-family:var(--fh);font-size:14px;color:var(--text)}
+.qmini .done .row b{color:var(--ok)}
+.qmini .ab{margin-top:3px}
+.qmini .done .ab i{background:var(--ok)!important}
+.cell.today{margin-top:0;padding-top:4px;gap:0;justify-content:center;border-style:solid}
+.cell .qbars{display:flex;gap:3px;margin-top:2px;width:70%}
+.cell .qbars i{flex:1;height:3px;border-radius:2px;background:transparent}
+.cell .qbars i.ok{background:var(--accent2)}
+.cell .qbars i.bad{background:var(--bad);opacity:.75}
+.cell .qbars i.pend{background:var(--line)}
+.qintro ul{margin:8px 0 0;padding-left:20px;line-height:1.6}
+.qintro li b{font-family:var(--fh);font-size:17px;letter-spacing:.04em}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -412,6 +472,10 @@ const RELAPSE_Q = {t:"„Und diejenigen, die, wenn sie etwas Schändliches getan
 const RANKS=[{min:0,r:"E",n:"Erwacht"},{min:3,r:"D",n:"Standhaft"},{min:7,r:"C",n:"Diszipliniert"},{min:14,r:"B",n:"Unerschütterlich"},{min:21,r:"A",n:"Eisern"},{min:28,r:"S",n:"Unbezwingbar"}];
 const WD=["So","Mo","Di","Mi","Do","Fr","Sa"], WDL=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
 const P=["p1","p2"];
+/* Daily Quests – ab Tag 8 (Woche 2). Für eine neue Woche mit anderen Zielen einen weiteren Eintrag {from:Tag,list:[…]} anhängen.
+   Kürzel (k): nur Kleinbuchstaben, max. 8 Zeichen – der Sync-Server übernimmt neue Kürzel automatisch. */
+const QWEEKS=[{from:8,list:[{k:"pu",n:"Liegestütze",g:30,step:10},{k:"su",n:"Sit-ups",g:30,step:10},{k:"sq",n:"Squats",g:30,step:10},{k:"rd",n:"Seiten lesen",g:10,step:5}]}];
+const QSTART=QWEEKS[0].from, QFINE=10, QBONUS=5, QCAP=10;
 const API="/.netlify/functions/sync";
 const K={room:"nnn.room",theme:"nnn.theme",me:id=>"nnn.me."+id,st:id=>"nnn.state."+id};
 const qs=new URLSearchParams(location.search);
@@ -498,11 +562,11 @@ function mBadge(id){
   const rows=P.map(p=>{const c=calc(p),[x,m]=b.f(c);return`<div class="bprog ${p}"><b style="font-family:var(--fh)">${esc(nm(p))}</b><div class="ab"><i style="width:${x/m*100}%"></i></div><span class="small" style="text-align:right">${x>=m?"✓":x+"/"+m}</span></div>`}).join("");
   modal(`<div class="win-h"><span><i class="dia"></i>Titel</span><button class="btn sm ghost" data-act="close">Schließen</button></div>
    <div class="bhex big"><span>${b.g}</span></div><h2 style="text-align:center">„${esc(b.n)}“</h2><p class="muted" style="text-align:center">${esc(b.d)}</p>${rows}`)}
-function lvlUp(p,from,to,rankUp,diffs){fxPush(done=>{
-  SFX.up();const rk=rankOf(to);const parts=particles(28);
+function lvlUp(p,from,to,rankUp,diffs,sub){fxPush(done=>{
+  SFX.up();const rk=rankOf(calc(p).streak);const parts=particles(28);
   const el=document.createElement("div");el.className="lvl";el.dataset.theme="dark";
   el.innerHTML=`<div class="rays"></div>${parts}<div class="flash"></div><div class="lvl-box"><div class="lvl-sys">[ SYSTEM ]</div><div class="lvl-t glitch" style="--d:250ms">LEVEL UP!</div>
-   <div class="lvl-n"><span class="from">LV. ${from}</span><span class="arr">→</span><span class="to">LV. ${to}</span></div><div class="lvl-s">${esc(nm(p))} · Tag ${dayIndex()} abgeschlossen</div>${diffs&&diffs.length?`<div class="lvl-attr">${diffs.map(([n,v])=>esc(n.toUpperCase())+" +"+v).join(" · ")}</div>`:""}
+   <div class="lvl-n"><span class="from">LV. ${from}</span><span class="arr">→</span><span class="to">LV. ${to}</span></div><div class="lvl-s">${esc(sub||`${nm(p)} · Tag ${dayIndex()} abgeschlossen`)}</div>${diffs&&diffs.length?`<div class="lvl-attr">${diffs.map(([n,v])=>esc(n.toUpperCase())+" +"+v).join(" · ")}</div>`:""}
    ${rankUp?`<div class="lvl-rank"><div class="hex hexin"><div class="hex-in"><b>${rk.r}</b><small>RANG</small></div></div><div class="rt">RANG-AUFSTIEG · ${rk.n.toUpperCase()}</div></div>`:""}
    <div class="lvl-tap">Tippen zum Fortfahren</div></div>`;
   document.body.appendChild(el);if(rankUp)setTimeout(()=>SFX.bzzt(),1000);
@@ -515,12 +579,26 @@ const isRev=(d,k)=>rev.has(d+k)||!!(me&&state&&entry(d,me)["r"+k]);
 function setRev(d,k){rev.add(d+k);ls.set("nnn.rev."+roomId,JSON.stringify([...rev]))}
 function newDayCheck(){
   if(!state||$("#modal").innerHTML)return false;const T=dayIndex();if(T<1||T>30)return false;
-  const k="nnn.seen."+roomId,seen=+(ls.get(k)||0);if(seen>=T)return false;ls.set(k,String(T));
+  const k="nnn.seen."+roomId,seen=+(ls.get(k)||0);if(seen>=T)return questIntro();ls.set(k,String(T));
+  const L=questsFor(T),y=T-1,yq=me&&y>=1&&questsFor(y)?qOk(y,me):null;if(L)ls.set(qiKey(),"1");
   SFX.bzzt();
   modal(`<div class="win-h"><span><i class="dia"></i>Systemmeldung</span><span class="chip">Neu</span></div>
    <div class="nd-big glitch" style="--d:300ms">TAG ${T}</div><h2 class="mt8">wurde freigeschaltet</h2>
    <p class="muted">Zwei verschlüsselte Nachrichten warten: <b>1 × ${esc(CONTENT[T-1].i.k)}</b> und <b>1 × Wissenschaft</b>.</p>
+   ${yq===false?`<div class="potmsg"><b>+${eur(QFINE)}</b><div class="small muted">Strafe: Daily Quest von Tag ${y} nicht erfüllt.</div></div>`:yq===true?`<div class="tip" style="border-left-color:var(--ok)"><b style="color:var(--ok)">Tag ${y}</b>Daily Quest erfüllt – keine Strafe.</div>`:""}
+   ${L?`<div class="tip"><b>Neue Daily Quest</b>${L.map(q=>q.g+" "+esc(q.n)).join(" · ")}<br><span class="muted small">Alles geschafft = Level Up · sonst ${eur(QFINE)} in den Topf.</span></div>`:""}
    <button class="btn primary block mt12" data-act="opennew" data-d="${T}">Öffnen</button>`);return true}
+const qiKey=()=>"nnn.qintro."+roomId;
+function questIntro(){
+  if(!state||!me||$("#modal").innerHTML)return false;const T=dayIndex(),L=questsFor(T);if(!L||T>30||ls.get(qiKey()))return false;ls.set(qiKey(),"1");
+  SFX.bzzt();
+  modal(`<div class="win-h"><span><i class="dia"></i>Systemmeldung</span><span class="chip">Neu</span></div>
+   <div class="nd-big glitch" style="--d:300ms;font-size:42px">DAILY QUEST</div><h2 class="mt8">Ab Woche 2 aktiv</h2>
+   <p class="muted small" style="margin-bottom:0">Jeder Spieler bekommt ab jetzt jeden Tag diese Aufgaben. Sie dürfen über den Tag verteilt werden.</p>
+   <ul>${L.map(q=>`<li><b>${q.g}</b> ${esc(q.n)}</li>`).join("")}</ul>
+   <div class="tip"><b>Belohnung</b>Alles geschafft = Level Up. Jede Übung bis zum ${QBONUS}-Fachen bringt anteilig ein weiteres Level (2× = 25 %, 3× = 50 %, ${QBONUS}× = 1 Level).</div>
+   <div class="tip" style="border-left-color:var(--bad)"><b style="color:var(--bad)">Strafe</b>Nicht alles bis 24:00 Uhr geschafft → ${eur(QFINE)} in den Topf. Höchstens ${eur(QFINE)} pro Tag – egal, wie viel fehlt.</div>
+   <button class="btn primary block mt16" data-act="qaccept">Quest annehmen</button>`,"qintro");return true}
 
 
 /* ================= Helfer ================= */
@@ -532,6 +610,8 @@ function now(){const d=qs.get("debugDate");if(d){const a=d.split("-").map(Number
 /* ================= Zustand ================= */
 let roomId=null, me=null, state=null, view="status", selDay=1, logFilter="all", syncState="idle", dirty=false, pendingRender=false, lastT=-1;
 function blank(){return norm({})}
+function normQ(q){const o={};if(!q||typeof q!=="object")return o;for(const k of Object.keys(q).filter(k=>/^[a-z]{1,8}$/.test(k)).sort().slice(0,8)){const v=Math.round(+q[k]);o[k]=Number.isFinite(v)?Math.max(0,Math.min(1000,v)):0}return o}
+const EMPTY=()=>({s:null,st:0,n:"",nt:0,ri:0,rw:0,rc:0,q:{},qt:0});
 function norm(s){
   s=(s&&typeof s==="object")?s:{};
   const o={v:1,year:Number.isInteger(s.year)?s.year:now().getFullYear(),names:{},days:{}};
@@ -539,7 +619,7 @@ function norm(s){
   o.pact={};for(const p of P){const x=s.pact&&s.pact[p];o.pact[p]={t:(x&&+x.t)||0}}
   for(const p of P){const x=s.names&&s.names[p];o.names[p]=(x&&typeof x==="object")?{v:String(x.v||"").slice(0,40),t:+x.t||0}:{v:"",t:0}}
   if(s.days&&typeof s.days==="object")for(const k in s.days){const d=+k;if(!(d>=1&&d<=30))continue;const src=s.days[k]||{};const e={};
-    for(const p of P){const x=src[p];if(x&&typeof x==="object"){const st=(x.s==="clean"||x.s==="relapse")?x.s:null;e[p]={s:st,st:+x.st||0,n:typeof x.n==="string"?x.n:"",nt:+x.nt||0,ri:+x.ri||0,rw:+x.rw||0,rc:st==="relapse"?Math.max(1,Math.min(99,Math.round(+x.rc||1))):0}}}
+    for(const p of P){const x=src[p];if(x&&typeof x==="object"){const st=(x.s==="clean"||x.s==="relapse")?x.s:null;e[p]={s:st,st:+x.st||0,n:typeof x.n==="string"?x.n:"",nt:+x.nt||0,ri:+x.ri||0,rw:+x.rw||0,rc:st==="relapse"?Math.max(1,Math.min(99,Math.round(+x.rc||1))):0,q:normQ(x.q),qt:+x.qt||0}}}
     o.days[d]=e}
   return o}
 function merge(a,b){
@@ -549,22 +629,22 @@ function merge(a,b){
   for(const p of P)o.pact[p]={t:Math.max(a.pact[p].t,b.pact[p].t)};
   const keys=new Set([...Object.keys(a.days),...Object.keys(b.days)]);
   for(const k of keys){o.days[k]={};for(const p of P){const ea=a.days[k]&&a.days[k][p],eb=b.days[k]&&b.days[k][p];if(!ea&&!eb)continue;
-    const E={s:null,st:0,n:"",nt:0},A=ea||E,B=eb||E;
-    const S=B.st>A.st?B:A, N=B.nt>A.nt?B:A;
-    o.days[k][p]={s:S.s,st:S.st,n:N.n,nt:N.nt,ri:Math.max(A.ri||0,B.ri||0),rw:Math.max(A.rw||0,B.rw||0),rc:S.s==="relapse"?Math.max(1,S.rc||1):0}}}
+    const E=EMPTY(),A=ea||E,B=eb||E;
+    const S=B.st>A.st?B:A, N=B.nt>A.nt?B:A, Q=B.qt>A.qt?B:A;
+    o.days[k][p]={s:S.s,st:S.st,n:N.n,nt:N.nt,ri:Math.max(A.ri||0,B.ri||0),rw:Math.max(A.rw||0,B.rw||0),rc:S.s==="relapse"?Math.max(1,S.rc||1):0,q:Q.q,qt:Q.qt}}}
   return o}
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 function saveLocal(){if(roomId)ls.set(K.st(roomId),JSON.stringify(state))}
 function loadLocal(id){try{const r=ls.get(K.st(id));return r?norm(JSON.parse(r)):null}catch(e){return null}}
 function nm(p){const v=state.names[p].v.trim();return v||(p==="p1"?"Spieler 1":"Spieler 2")}
-function entry(d,p){return(state.days[d]&&state.days[d][p])||{s:null,st:0,n:"",nt:0,ri:0,rw:0,rc:0}}
-function upd(d,p,patch){state.days[d]=state.days[d]||{};state.days[d][p]=Object.assign({s:null,st:0,n:"",nt:0,ri:0,rw:0,rc:0},state.days[d][p],patch);saveLocal();schedulePush()}
+function entry(d,p){return(state.days[d]&&state.days[d][p])||EMPTY()}
+function upd(d,p,patch){state.days[d]=state.days[d]||{};state.days[d][p]=Object.assign(EMPTY(),state.days[d][p],patch);saveLocal();schedulePush()}
 
 /* ================= Zeit & Statistik ================= */
 function dayIndex(){const n=now(),y=state.year;if(n<new Date(y,10,1))return 0;if(n>=new Date(y,11,1))return 31;return n.getDate()}
 const dateOf=d=>new Date(state.year,10,d);
 const dlong=d=>`${WDL[dateOf(d).getDay()]}, ${d}. November`;
-const ATTRS=[{k:"glaube",n:"Glaube",src:"+2 pro gelesenem Koranvers/Hadith"},{k:"wissen",n:"Wissen",src:"+2 pro gelesenem Wissenschafts-Fakt"},{k:"disziplin",n:"Disziplin",src:"+2 pro eingetragenem Tag, +1 pro automatisch gezähltem"},{k:"ausdauer",n:"Ausdauer",src:"Streak + Bestwert"},{k:"reflexion",n:"Reflexion",src:"+2 pro Tag mit Gedanken, +1 für lange Einträge"}];
+const ATTRS=[{k:"glaube",n:"Glaube",src:"+2 pro gelesenem Koranvers/Hadith"},{k:"wissen",n:"Wissen",src:"+2 pro gelesenem Wissenschafts-Fakt, +1 pro 10 gelesenen Seiten"},{k:"disziplin",n:"Disziplin",src:"+2 pro eingetragenem Tag, +1 pro automatisch gezähltem"},{k:"staerke",n:"Stärke",src:"+1 pro 30 Wiederholungen (Daily Quest)"},{k:"ausdauer",n:"Ausdauer",src:"Streak + Bestwert"},{k:"reflexion",n:"Reflexion",src:"+2 pro Tag mit Gedanken, +1 für lange Einträge"}];
 const BADGES=[
  {id:"d30",g:"XXX",n:"Unbezwingbar",d:"30 Tage am Stück standhaft.",f:c=>[Math.min(c.best,30),30]},
  {id:"d21",g:"XXI",n:"Eiserner Wille",d:"21 Tage am Stück standhaft.",f:c=>[Math.min(c.best,21),21]},
@@ -588,10 +668,25 @@ function calc(p){
     series.push(run)}
   let notes=0,longN=0,ri=0,rw=0;
   for(const k in state.days){const e=state.days[k][p];if(!e)continue;if(e.n&&e.n.trim()){notes++;if(e.n.trim().length>=150)longN++}if(e.ri)ri++;if(e.rw)rw++}
-  const at={glaube:10+2*ri,wissen:10+2*rw,disziplin:10+2*conf+auto,ausdauer:10+run+best,reflexion:10+2*notes+longN};
-  const c={streak:run,best,rel,clean,conf,auto,bestAfter,bestPerf,both,notes,longN,ri,rw,series,at};
+  // Daily Quests: Strafe nur für abgelaufene Tage, XP auch für heute
+  let qxp=0,qdone=0,qfail=0,reps=0,pages=0;
+  for(let d=QSTART;d<=last;d++){const L=questsFor(d);if(!L)continue;
+    for(const x of L){const v=qVal(d,p,x.k);if(x.k==="rd")pages+=v;else reps+=v}
+    qxp+=qXP(d,p);if(qOk(d,p))qdone++;else if(d<T)qfail++}
+  const qlv=Math.floor(qxp/100+1e-9);
+  const at={glaube:10+2*ri,wissen:10+2*rw+Math.floor(pages/10),disziplin:10+2*conf+auto,staerke:10+Math.floor(reps/30),ausdauer:10+run+best,reflexion:10+2*notes+longN};
+  const c={streak:run,best,rel,clean,conf,auto,bestAfter,bestPerf,both,notes,longN,ri,rw,series,at,qxp,qlv,qdone,qfail,reps,pages,lv:run+qlv};
   c.earned=BADGES.filter(b=>{const[x,m]=b.f(c);return x>=m});c.title=c.earned[0]||null;return c}
 const stats=calc;
+/* ---------- Daily-Quest-Helfer ---------- */
+function questsFor(d){let w=null;for(const x of QWEEKS)if(d>=x.from)w=x;return w?w.list:null}
+function qVal(d,p,k){const q=entry(d,p).q;return Math.max(0,+(q&&q[k])||0)}
+function qOk(d,p){const L=questsFor(d);return!!L&&L.every(x=>qVal(d,p,x.k)>=x.g)}
+function qCount(d,p){return(questsFor(d)||[]).filter(x=>qVal(d,p,x.k)>=x.g).length}
+// Bonus pro Übung: 1× = 0 %, 2× = 25 %, 5× = 100 % (= 1 Level), weiter linear bis QCAP
+function qBonus(v,g){const r=Math.min(v/g,QCAP);return r>1?(r-1)/(QBONUS-1)*100:0}
+function qXP(d,p){const L=questsFor(d);if(!L)return 0;let x=qOk(d,p)?100:0;for(const q of L)x+=qBonus(qVal(d,p,q.k),q.g);return x}
+function qState(d,p){const T=dayIndex();if(!questsFor(d)||d>T&&T<31)return"";if(qOk(d,p))return"ok";return d<T?"bad":"pend"}
 const attrDiff=(a,b)=>ATTRS.filter(x=>b.at[x.k]>a.at[x.k]).map(x=>[x.n,b.at[x.k]-a.at[x.k]]);
 const rankOf=s=>RANKS.reduce((r,x)=>s>=x.min?x:r,RANKS[0]);
 const nextRank=s=>RANKS.find(x=>x.min>s)||null;
@@ -636,8 +731,10 @@ const lrKey=()=>"nnn.lr."+roomId;
 function unreadDays(){if(!me||!state)return[];const f=other(me),lr=+(ls.get(lrKey())||0),out=[];for(let d=30;d>=1;d--){const e=entry(d,f);if(e.n&&e.n.trim()&&e.nt>lr)out.push(d)}return out}
 const notified=new Set();
 function applyRemote(m){if(same(m,state))return;
+  let qf=0;if(me){const f=other(me),T=dayIndex(),L=T>=1&&T<=30?questsFor(T):null;if(L){const mq=(m.days[T]&&m.days[T][f]&&m.days[T][f].q)||{};if(!qOk(T,f)&&L.every(x=>(+mq[x.k]||0)>=x.g))qf=T}}
   let fresh=[];if(me){const f=other(me);for(let d=1;d<=30;d++){const a=entry(d,f),b=(m.days[d]&&m.days[d][f])||{};if(b.n&&b.n.trim()&&(b.nt||0)>(a.nt||0)&&!notified.has(d)){fresh.push(d)}}}
   state=m;saveLocal();safeRender();
+  if(qf&&!booting){SFX.bzzt();toast(`${nm(other(me))}: Daily Quest erfüllt`,`Tag ${qf} – ${nm(other(me))} hat alles geschafft.${qOk(qf,me)?"":" Jetzt du."}`)}
   if(fresh.length&&!booting){fresh.forEach(d=>notified.add(d));const d=fresh[fresh.length-1],t=entry(d,other(me)).n.trim();SFX.bzzt();toast(`Neuer Eintrag von ${nm(other(me))}`,`Tag ${d}: ${t.length>90?t.slice(0,90)+" …":t}`)}}
 function markSaved(){document.querySelectorAll(".saved[data-pending]").forEach(el=>{el.removeAttribute("data-pending");el.textContent=me?`✓ Gespeichert – ${nm(other(me))} sieht diesen Eintrag`:"✓ Gespeichert"})}
 
@@ -680,14 +777,16 @@ function vPlayer(p){
   const st=stats(p),rk=rankOf(st.streak),nx=nextRank(st.streak),T=dayIndex();
   const prog=nx?((st.streak-rk.min)/(nx.min-rk.min))*100:100;
   let today="";
-  if(T>=1&&T<=30){const s=entry(T,p).s;
+  if(T>=1&&T<=30){const s=entry(T,p).s,L=questsFor(T);
     today=`<div class="today"><span class="small">Heute (Tag ${T}): ${s==="clean"?'<span class="chip ok">✓ Standhaft</span>':s==="relapse"?'<span class="chip bad">✗ Rückfall</span>':'<span class="chip">Offen</span>'}</span>
-    ${s?"":`<button class="btn sm" data-act="goday" data-d="${T}">Eintragen</button>`}</div>`}
+    ${s?"":`<button class="btn sm" data-act="goday" data-d="${T}">Eintragen</button>`}</div>
+    ${L?`<div class="today" style="border-top:0;padding-top:0;margin-top:8px"><span class="small">Daily Quest: ${qOk(T,p)?'<span class="chip ok">✓ Erfüllt</span>':`<span class="chip">${qCount(T,p)} / ${L.length}</span>`}</span>${!qOk(T,p)&&(!me||p===me)?`<button class="btn sm" data-act="goquest">Trainieren</button>`:""}</div>`:""}`}
   return `<section class="win ${p}"><div class="win-h"><span><i class="dia"></i>Status</span>${me===p?'<span class="chip you">Du</span>':""}</div>
    <div class="pc-top"><div class="hex"><div class="hex-in"><b>${rk.r}</b><small>RANG</small></div></div>
-    <div><div class="pc-name" data-dc>${esc(nm(p))}</div><div class="pc-title">${rk.n}</div>${st.title?`<div class="pc-titel">„${esc(st.title.n)}“</div>`:""}<div class="pc-lv"><span>LV.</span><b data-count="${st.streak}">${st.streak}</b></div></div></div>
+    <div><div class="pc-name" data-dc>${esc(nm(p))}</div><div class="pc-title">${rk.n}</div>${st.title?`<div class="pc-titel">„${esc(st.title.n)}“</div>`:""}<div class="pc-lv"><span>LV.</span><b data-count="${st.lv}">${st.lv}</b></div></div></div>
    <div class="xp-l"><span>${nx?`${rk.r} → ${nx.r}`:"Max-Rang"}</span><span>${nx?`noch ${nx.min-st.streak} ${nx.min-st.streak===1?"Tag":"Tage"}`:"S-Rang"}</span></div>
    <div class="bar"><i style="width:${prog}%"></i></div>
+   ${T>=QSTART?`<div class="xp-l"><span>Quest-Level ${st.qlv}</span><span>${Math.floor(st.qxp%100)} / 100 XP</span></div><div class="bar"><i style="width:${st.qxp%100}%"></i></div><div class="hint" style="margin-top:4px">LV. ${st.lv} = ${st.streak} Streak + ${st.qlv} Quest</div>`:""}
    <div class="stats3"><div><b data-count="${st.streak}">${st.streak}</b><span>STREAK</span></div><div><b data-count="${st.best}">${st.best}</b><span>BESTWERT</span></div><div><b data-count="${st.rel}">${st.rel}</b><span>RÜCKFÄLLE</span></div></div>
    <div class="attrs"><div class="xp-l" style="margin-top:0"><span>Attribute</span><span>Punkte</span></div>
    ${ATTRS.map(a=>{const v=st.at[a.k];return`<div class="ar"><span>${a.n}</span><div class="ab"><i style="width:${Math.min(100,(v-10)/60*100)}%"></i></div><b data-count="${v}">${v}</b></div>`}).join("")}</div>
@@ -702,12 +801,12 @@ function vBadges(){
 
 function hexHtml(r,p){return`<div class="hex ${p}"><div class="hex-in"><b>${r.r}</b><small>RANG</small></div></div>`}
 function vDuel(){
-  const T=dayIndex(),c1=calc("p1"),c2=calc("p2"),r1=rankOf(c1.streak),r2=rankOf(c2.streak),diff=c1.streak-c2.streak;
-  const lead=T===0?"Das Duell beginnt am 1. November":diff===0?"Gleichstand":`${nm(diff>0?"p1":"p2")} führt mit ${Math.abs(diff)} ${Math.abs(diff)===1?"Tag":"Tagen"}`;
+  const T=dayIndex(),c1=calc("p1"),c2=calc("p2"),r1=rankOf(c1.streak),r2=rankOf(c2.streak),diff=c1.lv-c2.lv;
+  const lead=T===0?"Das Duell beginnt am 1. November":diff===0?"Gleichstand":`${nm(diff>0?"p1":"p2")} führt mit ${Math.abs(diff)} ${Math.abs(diff)===1?"Level":"Leveln"}`;
   let h=`<section class="win"><div class="win-h"><span><i class="dia"></i>Duell</span><span class="chip">${T>=1&&T<=30?"Tag "+T:T===0?"Bereit":"Finale"}</span></div>
-   <div class="vsrow"><div class="vsp p1">${hexHtml(r1,"p1")}<div class="vsn" data-dc>${esc(nm("p1"))}</div><div class="vsl">LV. <b data-count="${c1.streak}">${c1.streak}</b></div></div>
+   <div class="vsrow"><div class="vsp p1">${hexHtml(r1,"p1")}<div class="vsn" data-dc>${esc(nm("p1"))}</div><div class="vsl">LV. <b data-count="${c1.lv}">${c1.lv}</b></div></div>
    <div class="vsx glitch" style="--d:300ms">VS</div>
-   <div class="vsp p2">${hexHtml(r2,"p2")}<div class="vsn" data-dc>${esc(nm("p2"))}</div><div class="vsl">LV. <b data-count="${c2.streak}">${c2.streak}</b></div></div></div>
+   <div class="vsp p2">${hexHtml(r2,"p2")}<div class="vsn" data-dc>${esc(nm("p2"))}</div><div class="vsl">LV. <b data-count="${c2.lv}">${c2.lv}</b></div></div></div>
    <div class="lead">${esc(lead)}</div></section>`;
   // Verlauf
   h+=`<section class="win"><div class="win-h"><span><i class="dia"></i>Streak-Verlauf</span></div>`;
@@ -732,7 +831,7 @@ function vDuel(){
      <div class="hint">Tippe oder fahre über die Kurve für einzelne Tage.</div>`}
   h+=`</section>`;
   // Kopf an Kopf
-  const rows=[["Streak",c1.streak,c2.streak,1],["Bestwert",c1.best,c2.best,1],["Rückfälle",c1.rel,c2.rel,-1],["Einsatz €",potOf("p1").amt,potOf("p2").amt,-1],["Einträge",c1.notes,c2.notes,1],["Titel",c1.earned.length,c2.earned.length,1],...ATTRS.map(a=>[a.n,c1.at[a.k],c2.at[a.k],1])];
+  const rows=[["Level",c1.lv,c2.lv,1],["Streak",c1.streak,c2.streak,1],["Bestwert",c1.best,c2.best,1],["Rückfälle",c1.rel,c2.rel,-1],...(T>=QSTART?[["Quests ✓",c1.qdone,c2.qdone,1],["Quest-XP",Math.floor(c1.qxp),Math.floor(c2.qxp),1]]:[]),["Einsatz €",potOf("p1").amt,potOf("p2").amt,-1],["Einträge",c1.notes,c2.notes,1],["Titel",c1.earned.length,c2.earned.length,1],...ATTRS.map(a=>[a.n,c1.at[a.k],c2.at[a.k],1])];
   h+=`<section class="win"><div class="win-h"><span><i class="dia"></i>Kopf an Kopf</span></div>
    <div class="h2h" style="margin-top:0"><b style="font-size:11px;letter-spacing:.1em">${esc(nm("p1").slice(0,6).toUpperCase())}</b><span></span><span></span><span></span><b style="font-size:11px;letter-spacing:.1em">${esc(nm("p2").slice(0,6).toUpperCase())}</b></div>
    ${rows.map(([lab,a,b2,dir])=>{const mx=Math.max(a,b2,1),w1=dir*(a-b2)>0,w2=dir*(b2-a)>0;return`<div class="h2h"><b class="${w1?"vw":""}">${a}</b><div class="hb l"><i style="width:${a/mx*100}%"></i></div><span>${lab}</span><div class="hb r"><i style="width:${b2/mx*100}%"></i></div><b class="${w2?"vw":""}">${b2}</b></div>`}).join("")}
@@ -756,11 +855,11 @@ function wireChart(){
 function vCalendar(){
   const T=dayIndex();let cells="";
   for(let d=1;d<=30;d++){const cls=["cell"];if(d>Math.max(T,1)&&T<31)cls.push("future");if(d===T)cls.push("today");if(d===selDay&&view==="day")cls.push("sel");
-    cells+=`<button class="${cls.join(" ")}" data-act="goday" data-d="${d}" aria-label="Tag ${d}"><b>${d}</b><small>${WD[dateOf(d).getDay()]}</small><span class="bars"><i class="${cellState(d,"p1")}"></i><i class="${cellState(d,"p2")}"></i></span></button>`}
+    cells+=`<button class="${cls.join(" ")}" data-act="goday" data-d="${d}" aria-label="Tag ${d}"><b>${d}</b><small>${WD[dateOf(d).getDay()]}</small><span class="bars"><i class="${cellState(d,"p1")}"></i><i class="${cellState(d,"p2")}"></i></span>${questsFor(d)?`<span class="qbars"><i class="${qState(d,"p1")}"></i><i class="${qState(d,"p2")}"></i></span>`:""}</button>`}
   const sa=stats("p1"),sb=stats("p2"),done=sa.clean+sb.clean,max=2*Math.min(Math.max(T,0),30);
   return `<section class="win"><div class="win-h"><span><i class="dia"></i>Übersicht November</span><span class="chip">${done} / 60</span></div>
    <div class="cal">${cells}</div>
-   <div class="legend"><span><i style="background:var(--ok)"></i>Standhaft</span><span><i style="background:var(--ok);opacity:.38"></i>Automatisch gezählt</span><span><i style="background:var(--bad)"></i>Rückfall</span></div>
+   <div class="legend"><span><i style="background:var(--ok)"></i>Standhaft</span><span><i style="background:var(--ok);opacity:.38"></i>Automatisch gezählt</span><span><i style="background:var(--bad)"></i>Rückfall</span>${T>=QSTART?'<span><i style="background:var(--accent2);height:3px"></i>Quest ✓</span><span><i style="background:var(--bad);opacity:.75;height:3px"></i>Quest ✗ (+10 €)</span>':""}</div>
    <div class="hint">Linker Balken: ${esc(nm("p1"))} · rechter Balken: ${esc(nm("p2"))}. Tippe auf einen Tag für Details.</div>
    ${max?`<div class="xp-l"><span>Gemeinsam</span><span>${done} von ${max} Tagen</span></div><div class="bar"><i style="width:${done/60*100}%"></i></div>`:""}</section>`}
 
@@ -781,25 +880,25 @@ function vFeed(){
    <div class="who" style="margin-bottom:0"><span class="dot ${f}"></span><h3>${esc(nm(f))}</h3><span class="muted small">Tag ${d0}</span></div>
    <div class="msg">${esc(e.n)}</div><button class="btn block mt12" data-act="tab" data-v="log">Alle Einträge im Logbuch</button></section>`}
 const eur=n=>n.toLocaleString("de-DE")+" €";
-function potOf(p){const c=calc(p);return{rel:c.rel,amt:state.cfg.base+state.cfg.per*c.rel}}
+function potOf(p){const c=calc(p);return{rel:c.rel,qf:c.qfail,amt:state.cfg.base+state.cfg.per*c.rel+QFINE*c.qfail}}
 function potTotal(){return potOf("p1").amt+potOf("p2").amt}
 function vPot(){
   const T=dayIndex(),a=potOf("p1"),b=potOf("p2"),tot=a.amt+b.amt,base=state.cfg.base,per=state.cfg.per,mx=Math.max(a.amt,b.amt,1);
   const row=(p,x)=>`<div class="potrow ${p}"><div class="row"><b>${esc(nm(p))}${me===p?' <span class="chip you" style="font-size:9.5px">Du</span>':""}</b><b class="potamt" data-count="${x.amt}">${x.amt}</b></div>
-    <div class="ab"><i style="width:${x.amt/mx*100}%"></i></div><div class="hint" style="margin-top:4px">${eur(base)} Einsatz + ${x.rel} × ${eur(per)} Rückfälle</div></div>`;
+    <div class="ab"><i style="width:${x.amt/mx*100}%"></i></div><div class="hint" style="margin-top:4px">${eur(base)} Einsatz + ${x.rel} × ${eur(per)} Rückfälle${T>=QSTART?` + ${x.qf} × ${eur(QFINE)} Daily Quest`:""}</div></div>`;
   const canReport=me&&T>=1&&T<=30;
   return`<section class="win pot"><div class="win-h"><span><i class="dia"></i>Der Topf</span><span class="chip">${T===31?"Abrechnung":"Abrechnung 30.11."}</span></div>
    <div class="potbig"><span data-count="${tot}">${tot}</span><small> €</small></div>
    <div class="muted small" style="text-align:center">Davon macht ihr am Ende zusammen etwas Cooles.</div>
    ${row("p1",a)}${row("p2",b)}
-   ${canReport?`<button class="btn bad block mt16" data-act="report">✗ Rückfall melden (+${eur(per)})</button><div class="hint" style="text-align:center">Für heute, Tag ${T}. Jeder weitere Rückfall kostet ${eur(per)} extra.</div>`:""}</section>`}
+   ${canReport?`<button class="btn bad block mt16" data-act="report">✗ Rückfall melden (+${eur(per)})</button><div class="hint" style="text-align:center">Für heute, Tag ${T}. Jeder weitere Rückfall kostet ${eur(per)} extra.${T>=QSTART?` Daily Quest nicht geschafft: ${eur(QFINE)} pro Tag.`:""}</div>`:""}</section>`}
 function vPact(){
   const sworn=new Date(state.year,10,1).getTime();
   const rows=P.map(p=>{const t=state.pact[p].t||sworn;return`<div class="row" style="margin-top:8px"><span><span class="dot ${p}" style="display:inline-block;margin-right:8px"></span><b>${esc(nm(p))}</b></span><span class="chip ok">✓ Geschworen ${new Date(t).toLocaleDateString("de-DE")}</span></div>`}).join("");
   return`<section class="win pact"><div class="win-h"><span><i class="dia"></i>Ehrenkodex</span></div>
    <ol class="pactlist"><li>Jeder Rückfall wird ehrlich und sofort eingetragen.</li><li>Jeder Einsatz beträgt ${eur(state.cfg.base)}, jeder Rückfall kostet ${eur(state.cfg.per)} extra.</li><li>Am Monatsende zahlt jeder seinen Anteil in den Topf – davon machen wir zusammen etwas Cooles.</li><li class="pactbig">Wer lügt, ist ein Hurensohn.</li></ol>
    ${rows}</section>`}
-function vStatus(){const order=me==="p2"?["p2","p1"]:["p1","p2"];return vNotice()+vPot()+`<div class="pgrid">${order.map(vPlayer).join("")}</div>`+vFeed()+vTeaser()+vPact()+vBadges()+vCalendar()}
+function vStatus(){const order=me==="p2"?["p2","p1"]:["p1","p2"],T=dayIndex();return vNotice()+(T>=1&&T<=30?vQuest(T):"")+vPot()+`<div class="pgrid">${order.map(vPlayer).join("")}</div>`+vFeed()+vTeaser()+vPact()+vBadges()+vCalendar()}
 
 function vDay(){
   const d=selDay,T=dayIndex(),c=CONTENT[d-1],unlocked=d<=Math.max(T,1)||T===31,canCheck=T>=1&&d<=T;
@@ -811,6 +910,7 @@ function vDay(){
   h+=isRev(d,"i")?`<section class="win" id="card-${d}-i"><div class="win-h"><span><i class="dia"></i>${esc(c.i.k)}</span></div><p class="quote">${esc(c.i.t)}</p><div class="src">${esc(c.i.s)}</div></section>`:sealed("i");
   h+=isRev(d,"w")?`<section class="win sci" id="card-${d}-w"><div class="win-h"><span><i class="dia"></i>Wissenschaft</span></div><h3>${esc(c.w.h)}</h3><p style="margin:0">${esc(c.w.t)}</p><div class="src">Quelle: ${esc(c.w.s)}</div>
     <div class="tip"><b>Praxis</b>${esc(c.w.p)}</div></section>`:sealed("w");
+  h+=vQuest(d);
   const order=me==="p2"?["p2","p1"]:["p1","p2"];
   for(const p of order){const e=entry(d,p);
     if(me&&p!==me){const nu=e.n&&e.n.trim()&&e.nt>(+(ls.get(lrKey())||0));
@@ -825,6 +925,34 @@ function vDay(){
      <textarea id="note-${d}-${p}" data-act="note" data-p="${p}" placeholder="Gedanken zu Tag ${d} – wie lief's? Was war schwer, was hat geholfen?">${esc(e.n)}</textarea>
      <div class="saved" id="saved-${d}-${p}">${e.n&&e.n.trim()?(me?`✓ Gespeichert – ${esc(nm(other(me)))} sieht diesen Eintrag`:"✓ Gespeichert"):"Wird automatisch gespeichert – kein Absenden nötig."}</div></section>`}
   return h}
+
+/* ---------- Daily Quest ---------- */
+function qChip(d,p){const T=dayIndex(),L=questsFor(d);return qOk(d,p)?'<span class="chip ok">✓ Erfüllt</span>':d<T?`<span class="chip bad">✗ +${eur(QFINE)}</span>`:`<span class="chip">${qCount(d,p)} / ${L.length}</span>`}
+function qxText(v,g){const b=Math.floor(qBonus(v,g));return(v>=g?'<span class="okc">✓ Ziel erreicht</span>':`noch ${g-v}`)+(b?` · <span class="bon">Bonus +${b} % Level</span>`:v>=g?` · ab ${2*g}: Bonus`:"")}
+function qRow(d,p,q){const v=qVal(d,p,q.k),mx=q.g*QBONUS,ok=v>=q.g,id=`${d}-${p}-${q.k}`;
+  return`<div class="qrow ${ok?"done":""}" id="qrow-${id}"><div class="qh"><span class="qn">${esc(q.n)}</span><span class="qv"><b id="qv-${id}">${v}</b><small> / ${q.g}</small></span></div>
+   <div class="qctl"><button class="qb" data-act="qadd" data-d="${d}" data-p="${p}" data-k="${q.k}" data-v="-1" aria-label="${esc(q.n)} minus 1" ${v<=0?"disabled":""}>−</button>
+    <div class="qtrack"><input type="range" class="qr" id="qr-${id}" min="0" max="${mx}" step="1" value="${Math.min(v,mx)}" style="--p:${Math.min(v,mx)/mx}" data-d="${d}" data-p="${p}" data-k="${q.k}" data-g="${q.g}" aria-label="${esc(q.n)}"><i class="mk" style="--m:${1/QBONUS}"></i></div>
+    <button class="qb" data-act="qadd" data-d="${d}" data-p="${p}" data-k="${q.k}" data-v="1" aria-label="${esc(q.n)} plus 1" ${v>=q.g*QCAP?"disabled":""}>+</button>
+    <button class="qb w" data-act="qadd" data-d="${d}" data-p="${p}" data-k="${q.k}" data-v="${q.step}" aria-label="${esc(q.n)} plus ${q.step}" ${v>=q.g*QCAP?"disabled":""}>+${q.step}</button></div>
+   <div class="qx" id="qx-${id}">${qxText(v,q.g)}</div></div>`}
+function vQuest(d){
+  const L=questsFor(d),T=dayIndex();if(!L||T===0||(d>T&&T<31))return"";
+  const past=d<T,order=me==="p2"?["p2","p1"]:["p1","p2"],mine=me||"p1";
+  let h=`<section class="win quest ${mine}" id="quest"><div class="win-h"><span><i class="dia"></i>Daily Quest</span>${me?qChip(d,me):""}</div>
+   <div class="q-head"><div class="q-t" data-dc>Training des Spielers</div><div class="q-s">${d===T?`Verbleibend<b data-cd>${fmtDur(cdTarget()-now())}</b>`:`Tag ${d} · abgelaufen`}</div></div>`;
+  for(const p of order){
+    if(me&&p!==me){h+=`<div class="qfr ${p}"><div class="who"><span class="dot ${p}"></span><h3>${esc(nm(p))}</h3>${qChip(d,p)}</div>
+      <div class="qmini">${L.map(q=>{const v=qVal(d,p,q.k);return`<div class="${v>=q.g?"done":""}"><div class="row"><span>${esc(q.n)}</span><b>${v}/${q.g}</b></div><div class="ab"><i style="width:${Math.min(100,v/q.g*100)}%"></i></div></div>`}).join("")}</div></div>`;continue}
+    const c=calc(p),ok=qOk(d,p),xpd=Math.floor(qXP(d,p));
+    if(!me)h+=`<div class="qfr ${p}" style="margin-bottom:-4px"><div class="who"><span class="dot ${p}"></span><h3>${esc(nm(p))}</h3>${qChip(d,p)}</div></div>`;
+    h+=L.map(q=>qRow(d,p,q)).join("");
+    h+=`<div class="qsum"><div class="xp-l"><span>Quest-Level ${c.qlv}</span><span>${Math.floor(c.qxp%100)} / 100 XP</span></div><div class="bar"><i style="width:${c.qxp%100}%"></i></div>
+     <div class="hint" style="margin-top:4px">${d===T?"Heute":"An Tag "+d} verdient: <b>+${xpd} XP</b> · 100 XP = 1 Level</div>
+     <div class="qrules"><div class="rew ${ok?"got":""}"><b>Belohnung${ok?" ✓":""}</b>Alles geschafft = Level Up. Bonus: jede Übung bis zum ${QBONUS}-Fachen bringt ein weiteres Level – anteilig (2× = 25 %, 3× = 50 %, ${QBONUS}× = 1 Level).</div>
+     <div class="pen ${past&&!ok?"paid":""}"><b>Strafe${past&&!ok?` · +${eur(QFINE)} fällig`:""}</b>${past?(ok?"Abgewendet – alles erledigt.":`Nicht alles geschafft – ${eur(QFINE)} gehen in den Topf.`):`Nicht alles bis 24:00 Uhr geschafft → ${eur(QFINE)} in den Topf (höchstens ${eur(QFINE)} pro Tag).`}</div></div>
+     ${past?'<div class="hint">Nachtragen geht – der Ehrenkodex gilt.</div>':'<div class="hint">Darf über den Tag verteilt werden: Regler ziehen oder mit + / +10 hochzählen.</div>'}</div>`}
+  return h+`</section>`}
 
 function vLog(){
   const T=dayIndex(),last=T===0?0:Math.min(T,30);
@@ -848,8 +976,10 @@ function render(anim){
   setSync(syncState);
   if(fid){const el=document.getElementById(fid);if(el){el.focus({preventScroll:true});try{el.setSelectionRange(ss,se)}catch(e){}}}
   lastT=dayIndex();if(view==="log"&&me)ls.set(lrKey(),String(Date.now()));if(anim===true)animateView();setTimeout(checkBadges,450)}
-function safeRender(){const a=document.activeElement;if(a&&(a.tagName==="TEXTAREA"||a.tagName==="INPUT")){pendingRender=true;return}render()}
-document.addEventListener("focusout",()=>setTimeout(()=>{if(pendingRender){const a=document.activeElement;if(!(a&&(a.tagName==="TEXTAREA"||a.tagName==="INPUT"))){pendingRender=false;render()}}},50));
+let qDrag=false;
+function isTyping(){const a=document.activeElement;return!!(a&&(a.tagName==="TEXTAREA"||(a.tagName==="INPUT"&&a.type!=="range")))}
+function safeRender(){if(isTyping()||qDrag){pendingRender=true;return}render()}
+document.addEventListener("focusout",()=>setTimeout(()=>{if(pendingRender&&!isTyping()&&!qDrag){pendingRender=false;render()}},50));
 
 /* ================= Toasts & Modals ================= */
 function toast(title,msg,kind){const el=document.createElement("div");el.className="win toast"+(kind?" "+kind:"");el.innerHTML=`<b>[SYSTEM] ${esc(title)}</b>${esc(msg)}`;$("#toasts").appendChild(el);setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),400)},3600)}
@@ -920,6 +1050,30 @@ function enterRoom(id){
   if(id!=="local"){const u=new URL(location.href);if(u.searchParams.get("c")!==id){u.searchParams.set("c",id);history.replaceState(null,"",u.toString())}}
   me=ls.get(K.me(id));loadRev();selDay=Math.min(Math.max(dayIndex(),1),30)}
 
+/* ================= Daily Quest eintragen ================= */
+function qSet(d,p,k,v){
+  const T=dayIndex(),L=questsFor(d),q=L&&L.find(x=>x.k===k);if(!q||T<1||(d>T&&T<31))return;
+  v=Math.max(0,Math.min(q.g*QCAP,Math.round(+v||0)));if(qVal(d,p,k)===v)return;
+  const before=calc(p),was=qOk(d,p),cur=Object.assign({},entry(d,p).q);cur[k]=v;
+  upd(d,p,{q:normQ(cur),qt:Date.now()});const after=calc(p),done=qOk(d,p);render();
+  const df=attrDiff(before,after),dx=Math.floor(after.qxp)-Math.floor(before.qxp);
+  if(done&&!was)lvlUp(p,before.lv,after.lv,false,df,`Daily Quest${d===T?"":" Tag "+d} abgeschlossen${after.lv-before.lv>1?" + Bonus":""} · keine Strafe`);
+  else if(after.lv>before.lv)lvlUp(p,before.lv,after.lv,false,df,`Bonus-Training · ${q.n}: ${v} (${String(Math.round(v/q.g*10)/10).replace(".",",")}×)`);
+  else{SFX.open();if(dx>0)statPop([["XP",dx],...df]);else if(df.length)statPop(df);
+    if(was&&!done)toast("Daily Quest offen",`Tag ${d}: Ziel nicht mehr erreicht.`,"bad")}}
+function qLive(t){const d=t.dataset.d,p=t.dataset.p,k=t.dataset.k,g=+t.dataset.g,v=+t.value,id=`${d}-${p}-${k}`;
+  t.style.setProperty("--p",v/(+t.max||1));const vb=document.getElementById("qv-"+id);if(vb)vb.textContent=v;
+  const qx=document.getElementById("qx-"+id);if(qx)qx.innerHTML=qxText(v,g);const row=document.getElementById("qrow-"+id);if(row)row.classList.toggle("done",v>=g)}
+function qCommit(t){if(!t||!t.isConnected)return;const v=+t.value,d=+t.dataset.d,p=t.dataset.p,k=t.dataset.k,mx=+t.max;
+  // Regler steht am Anschlag, Wert liegt (über die Plus-Knöpfe) höher → nicht verkleinern
+  if(v===mx&&qVal(d,p,k)>mx)return;qSet(d,p,k,v)}
+const qDown=ev=>{if(ev.target.classList&&ev.target.classList.contains("qr"))qDrag=true};
+const qUp=ev=>{if(!qDrag)return;const t=ev.target&&ev.target.classList&&ev.target.classList.contains("qr")?ev.target:null;
+  setTimeout(()=>{qDrag=false;if(t)qCommit(t);if(pendingRender&&!isTyping()){pendingRender=false;render()}},0)};
+document.addEventListener("pointerdown",qDown,{passive:true});document.addEventListener("touchstart",qDown,{passive:true});
+["pointerup","pointercancel","touchend","touchcancel"].forEach(e=>document.addEventListener(e,qUp,{passive:true}));
+document.addEventListener("change",ev=>{const t=ev.target;if(t.classList&&t.classList.contains("qr")){qDrag=false;qCommit(t)}});
+
 /* ================= Events ================= */
 let noteT=null;
 document.addEventListener("click",async ev=>{
@@ -944,9 +1098,11 @@ document.addEventListener("click",async ev=>{
   else if(a==="syncnow"){if(roomId&&roomId!=="local"){setSync("busy");await (dirty?push():pull());if($("#modal").innerHTML)mSettings()}}
   else if(a==="st"){const p=b.dataset.p,s=b.dataset.s,d=selDay,cur=entry(d,p).s,val=cur===s?null:s;
     const before=stats(p);upd(d,p,{s:val,st:Date.now(),rc:val==="relapse"?1:0});const after=stats(p);render();
-    if(val==="clean"){const T=dayIndex(),df=attrDiff(before,after);if(d===T)lvlUp(p,before.streak,after.streak,rankOf(before.streak).r!==rankOf(after.streak).r,df);else{SFX.open();toast("Bestätigt",`Tag ${d} für ${nm(p)} als standhaft eingetragen.`);if(df.length)statPop(df)}}
+    if(val==="clean"){const T=dayIndex(),df=attrDiff(before,after);if(d===T)lvlUp(p,before.lv,after.lv,rankOf(before.streak).r!==rankOf(after.streak).r,df);else{SFX.open();toast("Bestätigt",`Tag ${d} für ${nm(p)} als standhaft eingetragen.`);if(df.length)statPop(df)}}
     else if(val==="relapse"){SFX.down();mRelapse(p,d)}}
   else if(a==="lf"){logFilter=b.dataset.f;render()}
+  else if(a==="qadd"){const d=+b.dataset.d,p=b.dataset.p,k=b.dataset.k;qSet(d,p,k,qVal(d,p,k)+(+b.dataset.v))}
+  else if(a==="goquest"||a==="qaccept"){closeModal();if(view!=="status"){view="status";render(true)}SFX.open();setTimeout(()=>{const q=document.getElementById("quest");if(q)q.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"})},60)}
   else if(a==="rc"){const p=b.dataset.p,d=selDay,e=entry(d,p);if(e.s!=="relapse")return;const n=Math.max(1,Math.min(99,(e.rc||1)+(+b.dataset.v)));upd(d,p,{rc:n,st:Date.now()});render();if(+b.dataset.v>0){SFX.down();toast(`+${eur(state.cfg.per)} in den Topf`,`${nm(p)}: Anteil jetzt ${eur(potOf(p).amt)} · Topf ${eur(potTotal())}`,"bad")}}
   else if(a==="report"){const T=dayIndex();if(!me||T<1||T>30)return;
     if(!b.dataset.armed){b.dataset.armed="1";b.textContent=`Wirklich? Nochmal tippen – +${eur(state.cfg.per)}`;SFX.bzzt();setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=`✗ Rückfall melden (+${eur(state.cfg.per)})`}},4000);return}
@@ -974,9 +1130,9 @@ document.addEventListener("click",async ev=>{
   else if(a==="localonly"){const n1=$("#o-p1").value.trim(),n2=$("#o-p2").value.trim();const t=Date.now();state=loadLocal("local")||blank();if(n1)state.names.p1={v:n1,t};if(n2)state.names.p2={v:n2,t};enterRoom("local");me=me||"p1";ls.set(K.me("local"),me);saveLocal();syncState="local";render(true);startLoop();setTimeout(newDayCheck,700)}
 });
 document.addEventListener("input",ev=>{
-  const t=ev.target;if(t.dataset.act!=="note")return;const p=t.dataset.p,d=selDay;
+  const t=ev.target;if(t.classList&&t.classList.contains("qr")){qLive(t);return}if(t.dataset.act!=="note")return;const p=t.dataset.p,d=selDay;
   const prevN=entry(d,p).n.trim(),nv=t.value.slice(0,5000);
-  state.days[d]=state.days[d]||{};state.days[d][p]=Object.assign({s:null,st:0,n:"",nt:0,ri:0,rw:0},state.days[d][p],{n:nv,nt:Date.now()});saveLocal();
+  state.days[d]=state.days[d]||{};state.days[d][p]=Object.assign(EMPTY(),state.days[d][p],{n:nv,nt:Date.now()});saveLocal();
   if(!prevN&&nv.trim())statPop([["Reflexion",2]]);else if(prevN.length<150&&nv.trim().length>=150)statPop([["Reflexion",1]]);
   const sv=document.getElementById(`saved-${d}-${p}`);if(sv){sv.setAttribute("data-pending","1");sv.textContent=roomId==="local"?"✓ gespeichert":"Speichert …"}
   if(roomId!=="local"){dirty=true;setSync("busy");clearTimeout(pushT);pushT=setTimeout(push,1200)}
