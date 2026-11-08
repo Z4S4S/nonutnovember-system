@@ -385,6 +385,20 @@ textarea:focus,.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-
 .qmini .done .row b{color:var(--ok)}
 .qmini .ab{margin-top:3px}
 .qmini .done .ab i{background:var(--ok)!important}
+.h2h{grid-template-columns:40px 1fr 84px 1fr 40px}
+.bar.xp{height:10px}
+.bar.xp i,.p2 .bar.xp i{background:linear-gradient(90deg,var(--accent2),var(--accent));box-shadow:0 0 12px color-mix(in srgb,var(--accent2) 60%,transparent)}
+.p2 .bar.xp i{background:linear-gradient(90deg,var(--pc2),var(--pc2b));box-shadow:0 0 12px var(--pc2b)}
+.vsp .ab{width:86%;margin-top:6px}
+.vsp .xpt{font-size:11px;color:var(--muted);font-family:var(--fh);letter-spacing:.08em;margin-top:3px}
+.duelmini{cursor:pointer;border-color:color-mix(in srgb,var(--pc2b) 30%,var(--line))}
+.duelmini .vsrow{gap:4px}
+.duelmini .vsn{font-size:16px;margin-top:0}
+.duelmini .vsl b{font-size:34px}
+.duelmini .vsx{font-size:30px}
+.duelmini .qtoday{display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--muted)}
+.duelmini .lead{margin-top:10px}
+.duelmini .go{text-align:center;font-size:11.5px;color:var(--accent);letter-spacing:.14em;font-family:var(--fh);text-transform:uppercase;margin-top:8px}
 .cell.today{margin-top:0;padding-top:4px;gap:0;justify-content:center;border-style:solid}
 .cell .qbars{display:flex;gap:3px;margin-top:2px;width:70%}
 .cell .qbars i{flex:1;height:3px;border-radius:2px;background:transparent}
@@ -474,7 +488,7 @@ const WD=["So","Mo","Di","Mi","Do","Fr","Sa"], WDL=["Sonntag","Montag","Dienstag
 const P=["p1","p2"];
 /* Daily Quests – ab Tag 8 (Woche 2). Für eine neue Woche mit anderen Zielen einen weiteren Eintrag {from:Tag,list:[…]} anhängen.
    Kürzel (k): nur Kleinbuchstaben, max. 8 Zeichen – der Sync-Server übernimmt neue Kürzel automatisch. */
-const QWEEKS=[{from:8,list:[{k:"pu",n:"Liegestütze",g:30,step:10},{k:"su",n:"Sit-ups",g:30,step:10},{k:"sq",n:"Squats",g:30,step:10},{k:"rd",n:"Seiten lesen",g:10,step:5}]}];
+const QWEEKS=[{from:8,list:[{k:"pu",n:"Liegestütze",s:"Liegest.",g:30,step:10},{k:"su",n:"Sit-ups",g:30,step:10},{k:"sq",n:"Squats",g:30,step:10},{k:"rd",n:"Seiten lesen",s:"Seiten",g:10,step:5}]}];
 const QSTART=QWEEKS[0].from, QFINE=10, QBONUS=5, QCAP=10;
 const API="/.netlify/functions/sync";
 const K={room:"nnn.room",theme:"nnn.theme",me:id=>"nnn.me."+id,st:id=>"nnn.state."+id};
@@ -527,7 +541,7 @@ function boot(){return new Promise(res=>{
   if(!introOn()||ss||reduced){res();return}
   const T=dayIndex();
   const lines=["> SYSTEM WIRD GELADEN …",roomId==="local"?"> LOKALER MODUS … OK":"> VERBINDUNG ZUM SERVER … OK",me?`> SPIELER ERKANNT: ${nm(me).toUpperCase()}`:"> SPIELER WIRD IDENTIFIZIERT …",
-    T>=1&&T<=30?`> TAG ${T} / 30 · STREAK ${me?stats(me).streak:0}`:T===0?"> CHALLENGE STARTET BALD":"> CHALLENGE ABGESCHLOSSEN"];
+    T>=1&&T<=30?`> TAG ${T} / 30 · LV. ${me?stats(me).lv:0}`:T===0?"> CHALLENGE STARTET BALD":"> CHALLENGE ABGESCHLOSSEN"];
   const el=document.createElement("div");el.className="boot";el.dataset.theme="dark";
   el.innerHTML=`<div class="boot-lines"></div><section class="win boot-win" style="visibility:hidden"><div class="win-h"><span><i class="dia"></i>System</span></div><div class="boot-t">${me?"WILLKOMMEN ZURÜCK,<br>"+esc(nm(me).toUpperCase()):"WILLKOMMEN, SPIELER"}</div></section><div class="boot-skip">Tippen zum Überspringen</div>`;
   document.body.appendChild(el);let done=false;
@@ -660,12 +674,12 @@ const BADGES=[
 ];
 function counted(p,d,T){const s=entry(d,p).s;return s!=="relapse"&&(d<T||s==="clean")}
 function calc(p){
-  const T=dayIndex(),last=Math.min(T,30);let run=0,best=0,rel=0,clean=0,conf=0,auto=0,bestAfter=0,perf=0,bestPerf=0,both=0;const series=[];
+  const T=dayIndex(),last=Math.min(T,30);let run=0,best=0,rel=0,clean=0,conf=0,auto=0,bestAfter=0,perf=0,bestPerf=0,both=0,qc=0;const series=[],lvs=[];
   for(let d=1;d<=last;d++){const e=entry(d,p),s=e.s;
     if(s==="relapse"){rel+=Math.max(1,e.rc||1);run=0}else if(d<T||s==="clean"){run++;clean++;if(s==="clean")conf++;else auto++;if(run>best)best=run;if(rel&&run>bestAfter)bestAfter=run}
     if(s==="clean"&&e.n&&e.n.trim()){perf++;if(perf>bestPerf)bestPerf=perf}else if(d<T||s)perf=0;
     if(counted("p1",d,T)&&counted("p2",d,T))both++;
-    series.push(run)}
+    series.push(run);if(d>=QSTART)qc+=qXP(d,p);lvs.push(run+Math.floor(qc/100+1e-9))}
   let notes=0,longN=0,ri=0,rw=0;
   for(const k in state.days){const e=state.days[k][p];if(!e)continue;if(e.n&&e.n.trim()){notes++;if(e.n.trim().length>=150)longN++}if(e.ri)ri++;if(e.rw)rw++}
   // Daily Quests: Strafe nur für abgelaufene Tage, XP auch für heute
@@ -675,7 +689,9 @@ function calc(p){
     qxp+=qXP(d,p);if(qOk(d,p))qdone++;else if(d<T)qfail++}
   const qlv=Math.floor(qxp/100+1e-9);
   const at={glaube:10+2*ri,wissen:10+2*rw+Math.floor(pages/10),disziplin:10+2*conf+auto,staerke:10+Math.floor(reps/30),ausdauer:10+run+best,reflexion:10+2*notes+longN};
-  const c={streak:run,best,rel,clean,conf,auto,bestAfter,bestPerf,both,notes,longN,ri,rw,series,at,qxp,qlv,qdone,qfail,reps,pages,lv:run+qlv};
+  // Ein gemeinsames Level: jeder standhafte Tag = 100 XP, Daily Quests geben zusätzlich XP
+  const xpIn=Math.max(0,Math.floor(qxp-qlv*100+1e-9));
+  const c={streak:run,best,rel,clean,conf,auto,bestAfter,bestPerf,both,notes,longN,ri,rw,series,lvs,at,qxp,qlv,qdone,qfail,reps,pages,lv:run+qlv,xpIn,xp:run*100+qxp};
   c.earned=BADGES.filter(b=>{const[x,m]=b.f(c);return x>=m});c.title=c.earned[0]||null;return c}
 const stats=calc;
 /* ---------- Daily-Quest-Helfer ---------- */
@@ -731,10 +747,12 @@ const lrKey=()=>"nnn.lr."+roomId;
 function unreadDays(){if(!me||!state)return[];const f=other(me),lr=+(ls.get(lrKey())||0),out=[];for(let d=30;d>=1;d--){const e=entry(d,f);if(e.n&&e.n.trim()&&e.nt>lr)out.push(d)}return out}
 const notified=new Set();
 function applyRemote(m){if(same(m,state))return;
-  let qf=0;if(me){const f=other(me),T=dayIndex(),L=T>=1&&T<=30?questsFor(T):null;if(L){const mq=(m.days[T]&&m.days[T][f]&&m.days[T][f].q)||{};if(!qOk(T,f)&&L.every(x=>(+mq[x.k]||0)>=x.g))qf=T}}
+  let qf=0,fB=null,mB=null;if(me){const f=other(me),T=dayIndex(),L=T>=1&&T<=30?questsFor(T):null;if(L){const mq=(m.days[T]&&m.days[T][f]&&m.days[T][f].q)||{};if(!qOk(T,f)&&L.every(x=>(+mq[x.k]||0)>=x.g))qf=T}fB=calc(f).lv;mB=calc(me).lv}
   let fresh=[];if(me){const f=other(me);for(let d=1;d<=30;d++){const a=entry(d,f),b=(m.days[d]&&m.days[d][f])||{};if(b.n&&b.n.trim()&&(b.nt||0)>(a.nt||0)&&!notified.has(d)){fresh.push(d)}}}
   state=m;saveLocal();safeRender();
-  if(qf&&!booting){SFX.bzzt();toast(`${nm(other(me))}: Daily Quest erfüllt`,`Tag ${qf} – ${nm(other(me))} hat alles geschafft.${qOk(qf,me)?"":" Jetzt du."}`)}
+  if(me&&!booting&&fB!==null){const f=other(me),fA=calc(f).lv,mA=calc(me).lv,pass=fA>mA&&fB<=mB,up=fA>fB;
+    if(qf||up){SFX.bzzt();toast(pass?`${nm(f)} hat dich überholt!`:qf?`${nm(f)}: Daily Quest erfüllt`:`${nm(f)} ist jetzt LV. ${fA}`,
+      `${qf?`Tag ${qf} – alles geschafft. `:""}${nm(f)} LV. ${fA} · du LV. ${mA}.${qf&&!qOk(qf,me)?" Jetzt du.":fA>=mA?" Hol ihn ein.":""}`,pass?"bad":"")}}
   if(fresh.length&&!booting){fresh.forEach(d=>notified.add(d));const d=fresh[fresh.length-1],t=entry(d,other(me)).n.trim();SFX.bzzt();toast(`Neuer Eintrag von ${nm(other(me))}`,`Tag ${d}: ${t.length>90?t.slice(0,90)+" …":t}`)}}
 function markSaved(){document.querySelectorAll(".saved[data-pending]").forEach(el=>{el.removeAttribute("data-pending");el.textContent=me?`✓ Gespeichert – ${nm(other(me))} sieht diesen Eintrag`:"✓ Gespeichert"})}
 
@@ -784,9 +802,9 @@ function vPlayer(p){
   return `<section class="win ${p}"><div class="win-h"><span><i class="dia"></i>Status</span>${me===p?'<span class="chip you">Du</span>':""}</div>
    <div class="pc-top"><div class="hex"><div class="hex-in"><b>${rk.r}</b><small>RANG</small></div></div>
     <div><div class="pc-name" data-dc>${esc(nm(p))}</div><div class="pc-title">${rk.n}</div>${st.title?`<div class="pc-titel">„${esc(st.title.n)}“</div>`:""}<div class="pc-lv"><span>LV.</span><b data-count="${st.lv}">${st.lv}</b></div></div></div>
-   <div class="xp-l"><span>${nx?`${rk.r} → ${nx.r}`:"Max-Rang"}</span><span>${nx?`noch ${nx.min-st.streak} ${nx.min-st.streak===1?"Tag":"Tage"}`:"S-Rang"}</span></div>
+   <div class="xp-l"><span>LV. ${st.lv} → ${st.lv+1}</span><span>${st.xpIn} / 100 XP</span></div><div class="bar xp"><i style="width:${st.xpIn}%"></i></div>
+   <div class="xp-l"><span>Rang ${nx?`${rk.r} → ${nx.r}`:"Max"}</span><span>${nx?`noch ${nx.min-st.streak} ${nx.min-st.streak===1?"Tag":"Tage"}`:"S-Rang"}</span></div>
    <div class="bar"><i style="width:${prog}%"></i></div>
-   ${T>=QSTART?`<div class="xp-l"><span>Quest-Level ${st.qlv}</span><span>${Math.floor(st.qxp%100)} / 100 XP</span></div><div class="bar"><i style="width:${st.qxp%100}%"></i></div><div class="hint" style="margin-top:4px">LV. ${st.lv} = ${st.streak} Streak + ${st.qlv} Quest</div>`:""}
    <div class="stats3"><div><b data-count="${st.streak}">${st.streak}</b><span>STREAK</span></div><div><b data-count="${st.best}">${st.best}</b><span>BESTWERT</span></div><div><b data-count="${st.rel}">${st.rel}</b><span>RÜCKFÄLLE</span></div></div>
    <div class="attrs"><div class="xp-l" style="margin-top:0"><span>Attribute</span><span>Punkte</span></div>
    ${ATTRS.map(a=>{const v=st.at[a.k];return`<div class="ar"><span>${a.n}</span><div class="ab"><i style="width:${Math.min(100,(v-10)/60*100)}%"></i></div><b data-count="${v}">${v}</b></div>`}).join("")}</div>
@@ -799,36 +817,52 @@ function vBadges(){
    <div class="bgrid">${list.map(b=>{const e1=c1.earned.includes(b),e2=c2.earned.includes(b);return`<button class="badge ${e1||e2?"got":"locked"}" data-act="badge" data-id="${b.id}"><div class="bhex"><span>${b.g}</span></div><div class="bn">${esc(b.n)}</div><div class="bw"><i class="dot p1 ${e1?"":"off"}"></i><i class="dot p2 ${e2?"":"off"}"></i></div></button>`}).join("")}</div>
    <div class="hint">Punkte unten zeigen, wer den Titel hat (blau: ${esc(nm("p1"))}, orange: ${esc(nm("p2"))}). Tippe für Details.</div></section>`}
 
+function duelLead(c1,c2){const T=dayIndex();if(T===0)return"Das Duell beginnt am 1. November";const d=c1.lv-c2.lv;
+  if(d)return`${nm(d>0?"p1":"p2")} führt mit ${Math.abs(d)} ${Math.abs(d)===1?"Level":"Leveln"}`;const x=Math.floor(c1.xp)-Math.floor(c2.xp);
+  return x?`Gleichstand · ${nm(x>0?"p1":"p2")} hat ${Math.abs(x)} XP Vorsprung`:"Gleichstand"}
+function vsSide(p,c,r,mini){return`<div class="vsp ${p}">${mini?"":hexHtml(r,p)}<div class="vsn" data-dc>${esc(nm(p))}</div><div class="vsl">LV. <b data-count="${c.lv}">${c.lv}</b></div><div class="ab"><i style="width:${c.xpIn}%"></i></div><div class="xpt">${c.xpIn} / 100 XP</div></div>`}
+function vDuelMini(){
+  const T=dayIndex();if(T<1)return"";const c1=calc("p1"),c2=calc("p2"),L=T<=30?questsFor(T):null;
+  return`<section class="win duelmini" data-act="tab" data-v="duel"><div class="win-h"><span><i class="dia"></i>Duell</span><span class="chip">${T<=30?"Tag "+T:"Finale"}</span></div>
+   <div class="vsrow">${vsSide("p1",c1,null,1)}<div class="vsx glitch" style="--d:300ms">VS</div>${vsSide("p2",c2,null,1)}</div>
+   <div class="lead">${esc(duelLead(c1,c2))}</div>
+   ${L?`<div class="qtoday"><span>Quest heute: <b>${qCount(T,"p1")}/${L.length}</b></span><span>Quest heute: <b>${qCount(T,"p2")}/${L.length}</b></span></div>`:""}
+   <div class="go">▶ Zum Duell</div></section>`}
+function vDayDuel(){
+  const T=dayIndex(),L=T>=1&&T<=30?questsFor(T):null;if(!L)return"";
+  const rows=[...L.map(q=>[q.s||q.n,qVal(T,"p1",q.k),qVal(T,"p2",q.k),q.g]),["XP heute",Math.floor(qXP(T,"p1")),Math.floor(qXP(T,"p2")),100]];
+  return`<section class="win"><div class="win-h"><span><i class="dia"></i>Tagesduell</span><span class="chip">Tag ${T}</span></div>
+   <div class="h2h" style="margin-top:0"><b style="font-size:11px;letter-spacing:.1em">${esc(nm("p1").slice(0,6).toUpperCase())}</b><span></span><span></span><span></span><b style="font-size:11px;letter-spacing:.1em">${esc(nm("p2").slice(0,6).toUpperCase())}</b></div>
+   ${rows.map(([lab,a,b2,g])=>{const mx=Math.max(a,b2,g,1);return`<div class="h2h"><b class="${a>b2?"vw":""}">${a}</b><div class="hb l"><i style="width:${a/mx*100}%"></i></div><span>${esc(lab)}</span><div class="hb r"><i style="width:${b2/mx*100}%"></i></div><b class="${b2>a?"vw":""}">${b2}</b></div>`}).join("")}
+   <div class="hint">Wer heute mehr macht, holt mehr XP – ab dem Doppelten gibt's Bonus, beim ${QBONUS}-Fachen ein ganzes Level.</div></section>`}
 function hexHtml(r,p){return`<div class="hex ${p}"><div class="hex-in"><b>${r.r}</b><small>RANG</small></div></div>`}
 function vDuel(){
-  const T=dayIndex(),c1=calc("p1"),c2=calc("p2"),r1=rankOf(c1.streak),r2=rankOf(c2.streak),diff=c1.lv-c2.lv;
-  const lead=T===0?"Das Duell beginnt am 1. November":diff===0?"Gleichstand":`${nm(diff>0?"p1":"p2")} führt mit ${Math.abs(diff)} ${Math.abs(diff)===1?"Level":"Leveln"}`;
+  const T=dayIndex(),c1=calc("p1"),c2=calc("p2"),r1=rankOf(c1.streak),r2=rankOf(c2.streak),lead=duelLead(c1,c2);
   let h=`<section class="win"><div class="win-h"><span><i class="dia"></i>Duell</span><span class="chip">${T>=1&&T<=30?"Tag "+T:T===0?"Bereit":"Finale"}</span></div>
-   <div class="vsrow"><div class="vsp p1">${hexHtml(r1,"p1")}<div class="vsn" data-dc>${esc(nm("p1"))}</div><div class="vsl">LV. <b data-count="${c1.lv}">${c1.lv}</b></div></div>
-   <div class="vsx glitch" style="--d:300ms">VS</div>
-   <div class="vsp p2">${hexHtml(r2,"p2")}<div class="vsn" data-dc>${esc(nm("p2"))}</div><div class="vsl">LV. <b data-count="${c2.lv}">${c2.lv}</b></div></div></div>
+   <div class="vsrow">${vsSide("p1",c1,r1)}<div class="vsx glitch" style="--d:300ms">VS</div>${vsSide("p2",c2,r2)}</div>
    <div class="lead">${esc(lead)}</div></section>`;
+  h+=vDayDuel();
   // Verlauf
-  h+=`<section class="win"><div class="win-h"><span><i class="dia"></i>Streak-Verlauf</span></div>`;
+  h+=`<section class="win"><div class="win-h"><span><i class="dia"></i>Level-Verlauf</span></div>`;
   if(T===0)h+=`<p class="muted">Ab dem 1. November seht ihr hier eure Kurven.</p>`;
   else{
-    const W=340,Hh=190,l=26,r=10,t=10,b=24,n=c1.series.length,mx=Math.max(5,...c1.series,...c2.series),ym=Math.ceil(mx/5)*5,st=ym<=10?2:5;
+    const W=340,Hh=190,l=26,r=10,t=10,b=24,n=c1.lvs.length,mx=Math.max(5,...c1.lvs,...c2.lvs),ym=Math.ceil(mx/5)*5,st=ym<=10?2:5;
     const X=d=>l+(d-1)/29*(W-l-r),Y=v=>t+(1-v/ym)*(Hh-t-b);
     let g="";for(let v=0;v<=ym;v+=st)g+=`<line class="gl" x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${l-6}" y="${Y(v)+3}" text-anchor="end">${v}</text>`;
     for(const d of [1,5,10,15,20,25,30])g+=`<text class="ax" x="${X(d)}" y="${Hh-6}" text-anchor="middle">${d}</text>`;
     const path=s=>s.map((v,i)=>`${i?"L":"M"}${X(i+1).toFixed(1)},${Y(v).toFixed(1)}`).join("");
     const area=s=>path(s)+`L${X(s.length).toFixed(1)},${Y(0)}L${X(1)},${Y(0)}Z`;
     const dots=(s,p)=>{const k=s.length;return`<circle class="mk ${p}" cx="${X(k)}" cy="${Y(s[k-1])}" r="4.5"/>`};
-    h+=`<div class="clegend"><span><i style="background:var(--pc1)"></i>${esc(nm("p1"))} · ${c1.streak}</span><span><i style="background:var(--pc2)"></i>${esc(nm("p2"))} · ${c2.streak}</span></div>
-     <div class="chartbox" id="chart" data-w="${W}" data-l="${l}" data-r="${r}" data-n="${n}"><svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Streak-Verlauf beider Spieler">
+    h+=`<div class="clegend"><span><i style="background:var(--pc1)"></i>${esc(nm("p1"))} · LV. ${c1.lv}</span><span><i style="background:var(--pc2)"></i>${esc(nm("p2"))} · LV. ${c2.lv}</span></div>
+     <div class="chartbox" id="chart" data-w="${W}" data-l="${l}" data-r="${r}" data-n="${n}"><svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Level-Verlauf beider Spieler">
       <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--pc1)" stop-opacity=".22"/><stop offset="1" stop-color="var(--pc1)" stop-opacity="0"/></linearGradient>
       <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--pc2)" stop-opacity=".18"/><stop offset="1" stop-color="var(--pc2)" stop-opacity="0"/></linearGradient></defs>
-      ${g}${n>1?`<path class="ar1" d="${area(c1.series)}"/><path class="ar2" d="${area(c2.series)}"/>`:""}
-      <path class="ln p1" pathLength="1" d="${path(c1.series)}"/><path class="ln p2" pathLength="1" d="${path(c2.series)}"/>
+      ${g}${n>1?`<path class="ar1" d="${area(c1.lvs)}"/><path class="ar2" d="${area(c2.lvs)}"/>`:""}
+      <path class="ln p1" pathLength="1" d="${path(c1.lvs)}"/><path class="ln p2" pathLength="1" d="${path(c2.lvs)}"/>
       <line class="xh" id="xh" x1="0" x2="0" y1="${t}" y2="${Hh-b}" style="display:none"/>
-      ${dots(c1.series,"p1")}${dots(c2.series,"p2")}
+      ${dots(c1.lvs,"p1")}${dots(c2.lvs,"p2")}
       <rect id="hit" x="${l-8}" y="0" width="${W-l-r+16}" height="${Hh}" fill="transparent"/></svg><div class="ctip" id="ctip"></div></div>
-     <div class="hint">Tippe oder fahre über die Kurve für einzelne Tage.</div>`}
+     <div class="hint">Jeder standhafte Tag = 1 Level, Daily Quests geben Extra-Level. Tippe auf die Kurve für einzelne Tage.</div>`}
   h+=`</section>`;
   // Kopf an Kopf
   const rows=[["Level",c1.lv,c2.lv,1],["Streak",c1.streak,c2.streak,1],["Bestwert",c1.best,c2.best,1],["Rückfälle",c1.rel,c2.rel,-1],...(T>=QSTART?[["Quests ✓",c1.qdone,c2.qdone,1],["Quest-XP",Math.floor(c1.qxp),Math.floor(c2.qxp),1]]:[]),["Einsatz €",potOf("p1").amt,potOf("p2").amt,-1],["Einträge",c1.notes,c2.notes,1],["Titel",c1.earned.length,c2.earned.length,1],...ATTRS.map(a=>[a.n,c1.at[a.k],c2.at[a.k],1])];
@@ -848,7 +882,7 @@ function wireChart(){
   const W=+box.dataset.w,l=+box.dataset.l,r=+box.dataset.r,n=+box.dataset.n;if(!n)return;const c1=calc("p1"),c2=calc("p2");
   const show=ev=>{const rc=svg.getBoundingClientRect(),vx=(ev.clientX-rc.left)/rc.width*W;let d=Math.round((vx-l)/(W-l-r)*29)+1;d=Math.max(1,Math.min(n,d));const x=l+(d-1)/29*(W-l-r);
     xh.setAttribute("x1",x);xh.setAttribute("x2",x);xh.style.display="";tip.style.display="block";tip.style.left=Math.max(70,Math.min(rc.width-70,x/W*rc.width))+"px";
-    tip.innerHTML=`<b>TAG ${d}</b><div class="r"><i class="sw" style="background:var(--pc1)"></i>${esc(nm("p1"))}: ${c1.series[d-1]}</div><div class="r"><i class="sw" style="background:var(--pc2)"></i>${esc(nm("p2"))}: ${c2.series[d-1]}</div>`};
+    tip.innerHTML=`<b>TAG ${d}</b><div class="r"><i class="sw" style="background:var(--pc1)"></i>${esc(nm("p1"))}: LV. ${c1.lvs[d-1]}</div><div class="r"><i class="sw" style="background:var(--pc2)"></i>${esc(nm("p2"))}: LV. ${c2.lvs[d-1]}</div>`};
   const hide=()=>{xh.style.display="none";tip.style.display="none"};
   hit.addEventListener("pointermove",show);hit.addEventListener("pointerdown",show);hit.addEventListener("pointerleave",hide)}
 
@@ -898,7 +932,7 @@ function vPact(){
   return`<section class="win pact"><div class="win-h"><span><i class="dia"></i>Ehrenkodex</span></div>
    <ol class="pactlist"><li>Jeder Rückfall wird ehrlich und sofort eingetragen.</li><li>Jeder Einsatz beträgt ${eur(state.cfg.base)}, jeder Rückfall kostet ${eur(state.cfg.per)} extra.</li><li>Am Monatsende zahlt jeder seinen Anteil in den Topf – davon machen wir zusammen etwas Cooles.</li><li class="pactbig">Wer lügt, ist ein Hurensohn.</li></ol>
    ${rows}</section>`}
-function vStatus(){const order=me==="p2"?["p2","p1"]:["p1","p2"],T=dayIndex();return vNotice()+(T>=1&&T<=30?vQuest(T):"")+vPot()+`<div class="pgrid">${order.map(vPlayer).join("")}</div>`+vFeed()+vTeaser()+vPact()+vBadges()+vCalendar()}
+function vStatus(){const order=me==="p2"?["p2","p1"]:["p1","p2"],T=dayIndex();return vNotice()+vDuelMini()+(T>=1&&T<=30?vQuest(T):"")+vPot()+`<div class="pgrid">${order.map(vPlayer).join("")}</div>`+vFeed()+vTeaser()+vPact()+vBadges()+vCalendar()}
 
 function vDay(){
   const d=selDay,T=dayIndex(),c=CONTENT[d-1],unlocked=d<=Math.max(T,1)||T===31,canCheck=T>=1&&d<=T;
@@ -947,7 +981,7 @@ function vQuest(d){
     const c=calc(p),ok=qOk(d,p),xpd=Math.floor(qXP(d,p));
     if(!me)h+=`<div class="qfr ${p}" style="margin-bottom:-4px"><div class="who"><span class="dot ${p}"></span><h3>${esc(nm(p))}</h3>${qChip(d,p)}</div></div>`;
     h+=L.map(q=>qRow(d,p,q)).join("");
-    h+=`<div class="qsum"><div class="xp-l"><span>Quest-Level ${c.qlv}</span><span>${Math.floor(c.qxp%100)} / 100 XP</span></div><div class="bar"><i style="width:${c.qxp%100}%"></i></div>
+    h+=`<div class="qsum"><div class="xp-l"><span>LV. ${c.lv} → ${c.lv+1}</span><span>${c.xpIn} / 100 XP</span></div><div class="bar xp"><i style="width:${c.xpIn}%"></i></div>
      <div class="hint" style="margin-top:4px">${d===T?"Heute":"An Tag "+d} verdient: <b>+${xpd} XP</b> · 100 XP = 1 Level</div>
      <div class="qrules"><div class="rew ${ok?"got":""}"><b>Belohnung${ok?" ✓":""}</b>Alles geschafft = Level Up. Bonus: jede Übung bis zum ${QBONUS}-Fachen bringt ein weiteres Level – anteilig (2× = 25 %, 3× = 50 %, ${QBONUS}× = 1 Level).</div>
      <div class="pen ${past&&!ok?"paid":""}"><b>Strafe${past&&!ok?` · +${eur(QFINE)} fällig`:""}</b>${past?(ok?"Abgewendet – alles erledigt.":`Nicht alles geschafft – ${eur(QFINE)} gehen in den Topf.`):`Nicht alles bis 24:00 Uhr geschafft → ${eur(QFINE)} in den Topf (höchstens ${eur(QFINE)} pro Tag).`}</div></div>
