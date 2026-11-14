@@ -516,7 +516,7 @@ const QSTART=QWEEKS[0].from, QFINE=10, QBONUS=5, QCAP=10;
 /* Journal- & To-Do-Quest – ab Tag 15 (Woche 3), Abmachung vom 14.11.2026:
    Journal = eine ganze Seite (JWORDS Wörter) → Level Up · 5 To-Dos für morgen eintragen → Level Up.
    Eins davon (oder beides) nicht geschafft → JFINE € (einmal pro Tag). Am nächsten Tag: jedes erledigte To-Do = TDXP XP, unerledigt = keine Strafe. */
-const JSTART=15, JWORDS=250, JFINE=25, TDN=5, TDXP=20;
+const JSTART=15, JWORDS=250, JFINE=25, TDN=5, TDXP=20, JOPEN=18; // JOPEN: Journal & To-Do-Liste erst ab 18:00 Uhr (Abhaken jederzeit)
 const API="/.netlify/functions/sync";
 const K={room:"nnn.room",theme:"nnn.theme",me:id=>"nnn.me."+id,st:id=>"nnn.state."+id};
 const qs=new URLSearchParams(location.search);
@@ -629,7 +629,7 @@ function newDayCheck(){
    ${yq===false?`<div class="potmsg"><b>+${eur(QFINE)}</b><div class="small muted">Strafe: Daily Quest von Tag ${y} nicht erfüllt.</div></div>`:yq===true?`<div class="tip" style="border-left-color:var(--ok)"><b style="color:var(--ok)">Tag ${y}</b>Daily Quest erfüllt – keine Strafe.</div>`:""}
    ${me&&jOn(y)?(jqOk(y,me)?`<div class="tip" style="border-left-color:var(--ok)"><b style="color:var(--ok)">Tag ${y}</b>Journal & To-Dos erledigt – keine Strafe.</div>`:`<div class="potmsg"><b>+${eur(JFINE)}</b><div class="small muted">Strafe: ${!jOk(y,me)&&!tdOk(y,me)?"Journal und To-Do-Liste":!jOk(y,me)?"Journal":"To-Do-Liste"} von Tag ${y} fehlt.</div></div>`):""}
    ${me&&jOn(y)&&tdFill(y,me)?`<div class="tip"><b>Deine To-Dos für heute</b>${tdFill(y,me)} Aufgaben von gestern warten – jede erledigte = +${TDXP} XP.</div>`:""}
-   ${jNew?`<div class="tip"><b>Neue Quests ab heute</b>Journal: eine ganze Seite (${JWORDS} Wörter) · ${TDN} To-Dos für morgen. Je = Level Up · eins fehlt = ${eur(JFINE)} in den Topf.</div>`:""}
+   ${jNew?`<div class="tip"><b>Neue Quests ab heute</b>Journal: eine ganze Seite (${JWORDS} Wörter) · ${TDN} To-Dos für morgen, beides ab ${JOPEN}:00 Uhr. Je = Level Up · eins fehlt = ${eur(JFINE)} in den Topf.</div>`:""}
    ${L?`<div class="tip"><b>Neue Daily Quest</b>${L.map(q=>q.g+" "+esc(q.n)).join(" · ")}<br><span class="muted small">Alles geschafft = Level Up · sonst ${eur(QFINE)} in den Topf.</span></div>`:""}
    <button class="btn primary block mt12" data-act="opennew" data-d="${T}">Öffnen</button>`);return true}
 const qiKey=()=>"nnn.qintro."+roomId, jiKey=()=>"nnn.jintro."+roomId;
@@ -639,7 +639,7 @@ function jIntro(){
   modal(`<div class="win-h"><span><i class="dia"></i>Systemmeldung</span><span class="chip">Woche 3</span></div>
    <div class="nd-big glitch" style="--d:300ms;font-size:40px">NEUE QUESTS</div><h2 class="mt8">Journal & To-Do · ab Tag ${JSTART}</h2>
    <p class="muted small" style="margin-bottom:0">Zusätzlich zur Daily Quest bekommt jeder Spieler ab jetzt jeden Tag:</p>
-   <ul><li><b>Journal</b> – eine ganze Seite schreiben (mind. ${JWORDS} Wörter, die App zählt mit)</li><li><b>To-Do-Liste</b> – ${TDN} Aufgaben für morgen eintragen</li></ul>
+   <ul><li><b>Journal</b> – eine ganze Seite schreiben (mind. ${JWORDS} Wörter, die App zählt mit)</li><li><b>To-Do-Liste</b> – ${TDN} Aufgaben für morgen eintragen</li></ul><p class="muted small" style="margin-top:0">Beides wird jeden Tag erst ab ${JOPEN}:00 Uhr freigeschaltet. Abhaken geht den ganzen Tag.</p>
    <div class="tip"><b>Belohnung</b>Journal = Level Up · To-Do-Liste = Level Up. Am nächsten Tag bringt jedes erledigte To-Do +${TDXP} XP (alle ${TDN} = 1 Level). Nicht erledigt = keine Strafe.</div>
    <div class="tip" style="border-left-color:var(--bad)"><b style="color:var(--bad)">Strafe</b>Journal oder To-Do-Liste bis 24:00 Uhr nicht geschafft → ${eur(JFINE)} in den Topf. Auch wenn beides fehlt: nur ${eur(JFINE)} pro Tag.</div>
    <button class="btn primary block mt16" data-act="jaccept">Quests annehmen</button>`,"qintro");return true}
@@ -750,6 +750,8 @@ function qState(d,p){const T=dayIndex();if(!questsFor(d)||d>T&&T<31)return"";if(
 /* ---------- Journal-&-To-Do-Helfer ---------- */
 const wc=s=>(String(s||"").match(/[\p{L}\p{N}]+(?:[-'’][\p{L}\p{N}]+)*/gu)||[]).length;
 const jOn=d=>d>=JSTART&&d<=30;
+const jLocked=d=>jOn(d)&&d===dayIndex()&&now().getHours()<JOPEN;
+function jOpenAt(){const n=now();return new Date(n.getFullYear(),n.getMonth(),n.getDate(),JOPEN)}
 const jW=(d,p)=>wc(entry(d,p).j);
 const jOk=(d,p)=>jOn(d)&&jW(d,p)>=JWORDS;
 const tdList=(d,p)=>{const l=normTD(entry(d,p).td);while(l.length<TDN)l.push({x:"",c:0});return l};
@@ -1068,18 +1070,19 @@ function vJQ(d){
       ${prev?`<div class="${tdDone(prev,p)>=TDN?"done":""}"><div class="row"><span>Heute erledigt</span><b>${tdDone(prev,p)}/${tdFill(prev,p)}</b></div><div class="ab"><i style="width:${tdDone(prev,p)/TDN*100}%"></i></div></div>`:""}</div>
       <div class="hint">Der Journal-Text bleibt privat – du siehst nur die Wortzahl.</div></div>`;continue}
     if(!me)h+=`<div class="qfr ${p}" style="margin-bottom:-4px"><div class="who"><span class="dot ${p}"></span><h3>${esc(nm(p))}</h3>${jChip(d,p)}</div></div>`;
-    const id=`${d}-${p}`;
-    h+=`<div class="jblk ${jo?"done":""}" id="jb-${id}"><div class="qh"><span class="qn">Journal · 1 Seite</span><span class="qv"><b id="jw-${id}">${w}</b><small> / ${JWORDS} Wörter</small></span></div>
+    const id=`${d}-${p}`,lk=jLocked(d);
+    if(lk)h+=`<div class="jblk"><div class="qh"><span class="qn">🔒 Journal & To-Do-Liste</span></div><div class="tip" style="margin-top:8px"><b>Gesperrt bis ${JOPEN}:00 Uhr</b>Journal und To-Dos für morgen werden um ${JOPEN}:00 Uhr freigeschaltet – noch <span data-cdj>${fmtDur(jOpenAt()-now())}</span>.</div></div>`;
+    else h+=`<div class="jblk ${jo?"done":""}" id="jb-${id}"><div class="qh"><span class="qn">Journal · 1 Seite</span><span class="qv"><b id="jw-${id}">${w}</b><small> / ${JWORDS} Wörter</small></span></div>
      <div class="bar"><i id="jbar-${id}" style="width:${Math.min(100,w/JWORDS*100)}%"></i></div>
      <textarea class="jt" id="jn-${id}" data-act="jnote" data-d="${d}" data-p="${p}" placeholder="Schreib eine ganze Seite: Wie geht's dir wirklich? Was hat dich heute beschäftigt, was hast du gelernt, wofür bist du dankbar?">${esc(entry(d,p).j)}</textarea>
      <div class="qx" id="jx-${id}">${jwText(w)}</div></div>`;
     if(prev&&d===T)h+=`<div class="jblk"><div class="qh"><span class="qn">Heute zu erledigen</span><span class="qv"><b>${tdDone(prev,p)}</b><small> / ${tdFill(prev,p)}</small></span></div>${tdRows(prev,p,false)}<div class="qx">Jedes erledigte To-Do = +${TDXP} XP · nicht erledigt = keine Strafe</div></div>`;
-    h+=`<div class="jblk ${to?"done":""}" id="tb-${id}"><div class="qh"><span class="qn">To-Dos für ${d<30?"Tag "+(d+1):"morgen"}</span><span class="qv"><b id="tn-${id}">${tf}</b><small> / ${TDN}</small></span></div>${tdRows(d,p,true)}
+    if(!lk)h+=`<div class="jblk ${to?"done":""}" id="tb-${id}"><div class="qh"><span class="qn">To-Dos für ${d<30?"Tag "+(d+1):"morgen"}</span><span class="qv"><b id="tn-${id}">${tf}</b><small> / ${TDN}</small></span></div>${tdRows(d,p,true)}
      <div class="qx">${T>d?`Abhaken: +${TDXP} XP pro erledigtem To-Do`:`Morgen abhaken: +${TDXP} XP pro erledigtem To-Do`}</div></div>`;
     const ok=jo&&to;
     h+=`<div class="qsum"><div class="hint" style="margin-top:0">${d===T?"Heute":"An Tag "+d} verdient: <b>+${jXP(d,p)} XP</b></div>
      <div class="qrules"><div class="rew ${ok?"got":""}"><b>Belohnung${ok?" ✓":""}</b>Journal = Level Up · ${TDN} To-Dos eingetragen = Level Up. Am nächsten Tag: +${TDXP} XP je erledigtem To-Do.</div>
-     <div class="pen ${past&&!ok?"paid":""}"><b>Strafe${past&&!ok?` · +${eur(JFINE)} fällig`:""}</b>${past?(ok?"Abgewendet – beides erledigt.":`${!jo&&!to?"Journal und To-Dos fehlen":!jo?"Journal fehlt":"To-Dos fehlen"} – ${eur(JFINE)} gehen in den Topf.`):`Journal oder To-Do-Liste bis 24:00 Uhr nicht geschafft → ${eur(JFINE)} in den Topf (auch wenn beides fehlt: nur ${eur(JFINE)}).`}</div></div>
+     <div class="pen ${past&&!ok?"paid":""}"><b>Strafe${past&&!ok?` · +${eur(JFINE)} fällig`:""}</b>${past?(ok?"Abgewendet – beides erledigt.":`${!jo&&!to?"Journal und To-Dos fehlen":!jo?"Journal fehlt":"To-Dos fehlen"} – ${eur(JFINE)} gehen in den Topf.`):`Freigeschaltet ab ${JOPEN}:00 Uhr. Journal oder To-Do-Liste bis 24:00 Uhr nicht geschafft → ${eur(JFINE)} in den Topf (auch wenn beides fehlt: nur ${eur(JFINE)}).`}</div></div>
      ${past?'<div class="hint">Nachtragen geht – der Ehrenkodex gilt.</div>':""}</div>`}
   return h+`</section>`}
 
@@ -1274,7 +1277,7 @@ document.addEventListener("input",ev=>{
 });
 
 function jInput(t){
-  const d=+t.dataset.d,p=t.dataset.p,id=`${d}-${p}`,isJ=t.dataset.act==="jnote";
+  const d=+t.dataset.d,p=t.dataset.p,id=`${d}-${p}`,isJ=t.dataset.act==="jnote";if(jLocked(d)){safeRender();return}
   const wasOk=isJ?jOk(d,p):tdOk(d,p);let before=null;
   const patch=isJ?{j:t.value.slice(0,10000),jt:Date.now()}:(()=>{const l=tdList(d,p),i=+t.dataset.i;l[i]={x:t.value.slice(0,200),c:t.value.trim()?l[i].c:0};return{td:l,tdt:Date.now()}})();
   const nowOk=isJ?jOn(d)&&wc(patch.j)>=JWORDS:jOn(d)&&patch.td.filter(x=>x.x.trim()).length>=TDN;
@@ -1293,9 +1296,9 @@ function jInput(t){
 function setTheme(t){document.documentElement.dataset.theme=t;ls.set(K.theme,t);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="dark"?"#04060d":"#edf3fb"}
 
 /* ================= Loop ================= */
-let loopOn=false;
+let loopOn=false,lastJL=null;
 function startLoop(){if(loopOn)return;loopOn=true;
-  setInterval(()=>{if(!state)return;const tgt=cdTarget();document.querySelectorAll("[data-cd]").forEach(el=>{el.textContent=tgt?fmtDur(tgt-now()):""});if(dayIndex()!==lastT){safeRender();setTimeout(newDayCheck,300)}},1000);
+  setInterval(()=>{if(!state)return;const tgt=cdTarget();document.querySelectorAll("[data-cd]").forEach(el=>{el.textContent=tgt?fmtDur(tgt-now()):""});document.querySelectorAll("[data-cdj]").forEach(el=>{el.textContent=fmtDur(jOpenAt()-now())});const jl=jLocked(dayIndex());if(jl!==lastJL){if(lastJL!==null)safeRender();lastJL=jl}if(dayIndex()!==lastT){safeRender();setTimeout(newDayCheck,300)}},1000);
   setInterval(()=>{if(document.visibilityState!=="visible")return;document.querySelectorAll(".noise").forEach(el=>{el.textContent=noise(3)})},120);
   setInterval(()=>{if(state&&document.visibilityState==="visible")pull()},15000);
   document.addEventListener("visibilitychange",()=>{if(state&&document.visibilityState==="visible")pull()});
