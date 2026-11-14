@@ -4,7 +4,7 @@ import { getStore } from "@netlify/blobs";
 
 const P = ["p1", "p2"];
 const ID_RE = /^[A-Za-z0-9_-]{8,48}$/;
-const MAX = 400000;
+const MAX = 2000000;
 
 // Daily Quests: { kürzel: Anzahl }, z. B. { pu: 30, rd: 10 }. Schlüssel sortiert, max. 8, Werte 0–1000.
 function normQ(q) {
@@ -15,6 +15,11 @@ function normQ(q) {
     o[k] = Number.isFinite(v) ? Math.max(0, Math.min(1000, v)) : 0;
   }
   return o;
+}
+
+// To-Dos (Journal-&-To-Do-Quest ab Woche 3): [{ x: Text, c: 0|1 }], max. 10, Text max. 200 Zeichen.
+function normTD(a) {
+  return Array.isArray(a) ? a.slice(0, 10).map((t) => ({ x: String((t && t.x) || "").slice(0, 200), c: t && t.c ? 1 : 0 })) : [];
 }
 
 function norm(s) {
@@ -49,6 +54,10 @@ function norm(s) {
             rc: st === "relapse" ? Math.max(1, Math.min(99, Math.round(+x.rc || 1))) : 0,
             q: normQ(x.q),
             qt: +x.qt || 0,
+            j: typeof x.j === "string" ? x.j.slice(0, 10000) : "",
+            jt: +x.jt || 0,
+            td: normTD(x.td),
+            tdt: +x.tdt || 0,
           };
         }
       }
@@ -71,9 +80,9 @@ function merge(a, b) {
     for (const p of P) {
       const ea = a.days[k] && a.days[k][p], eb = b.days[k] && b.days[k][p];
       if (!ea && !eb) continue;
-      const E = { s: null, st: 0, n: "", nt: 0, ri: 0, rw: 0, rc: 0, q: {}, qt: 0 }, A = ea || E, B = eb || E;
-      const S = B.st > A.st ? B : A, N = B.nt > A.nt ? B : A, Q = B.qt > A.qt ? B : A;
-      o.days[k][p] = { s: S.s, st: S.st, n: N.n, nt: N.nt, ri: Math.max(A.ri || 0, B.ri || 0), rw: Math.max(A.rw || 0, B.rw || 0), rc: S.s === "relapse" ? Math.max(1, S.rc || 1) : 0, q: Q.q, qt: Q.qt };
+      const E = { s: null, st: 0, n: "", nt: 0, ri: 0, rw: 0, rc: 0, q: {}, qt: 0, j: "", jt: 0, td: [], tdt: 0 }, A = ea || E, B = eb || E;
+      const S = B.st > A.st ? B : A, N = B.nt > A.nt ? B : A, Q = B.qt > A.qt ? B : A, J = B.jt > A.jt ? B : A, D = B.tdt > A.tdt ? B : A;
+      o.days[k][p] = { s: S.s, st: S.st, n: N.n, nt: N.nt, ri: Math.max(A.ri || 0, B.ri || 0), rw: Math.max(A.rw || 0, B.rw || 0), rc: S.s === "relapse" ? Math.max(1, S.rc || 1) : 0, q: Q.q, qt: Q.qt, j: J.j, jt: J.jt, td: D.td, tdt: D.tdt };
     }
   }
   return o;
