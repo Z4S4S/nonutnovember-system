@@ -430,6 +430,24 @@ textarea:focus,.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-
 .cell .qbars i.pend{background:var(--line)}
 .qintro ul{margin:8px 0 0;padding-left:20px;line-height:1.6}
 .qintro li b{font-family:var(--fh);font-size:17px;letter-spacing:.04em}
+/* Intro Woche 3 – minimalistische Animationen */
+.ji-q{display:grid;gap:8px;margin-top:12px}
+.ji-c{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--panel2);animation:jiIn .5s ease calc(.35s + var(--i)*.25s) both}
+.ji-c b{display:block;font-family:var(--fh);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.ji-c>div{font-size:13.5px;line-height:1.4}
+.ji-r{display:inline-block;margin-top:4px;font-family:var(--fh);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 50%,transparent);border-radius:4px;padding:1px 6px}
+.ji-ico{flex:none;width:44px;height:44px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ji-ico .ji-tx{stroke:var(--muted);opacity:.6}
+.ji-ln{stroke-dasharray:20;stroke-dashoffset:20;animation:jiDraw .45s ease calc(.8s + var(--i)*.3s) forwards}
+.ji-ck{stroke:var(--ok);stroke-width:2.4;stroke-dasharray:10;stroke-dashoffset:10;animation:jiDraw .3s ease calc(1.1s + var(--i)*.35s) forwards}
+.ji-h{font-family:var(--fh);font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);margin:16px 0 6px;animation:jiIn .4s ease 1.2s both}
+.ji-bs{display:grid;gap:6px}
+.ji-b{font-size:13px;line-height:1.4;padding:6px 0 6px 12px;border-left:2px solid var(--accent2);animation:jiIn .45s ease calc(1.4s + var(--i)*.22s) both}
+.ji-b b{display:block;font-size:14px}
+.ji-b .src{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+@keyframes jiIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes jiDraw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.ji-ln,.ji-ck{stroke-dashoffset:0}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -621,7 +639,7 @@ function setRev(d,k){rev.add(d+k);ls.set("nnn.rev."+roomId,JSON.stringify([...re
 function newDayCheck(){
   if(!state||$("#modal").innerHTML)return false;const T=dayIndex();if(T<1||T>30)return false;
   const k="nnn.seen."+roomId,seen=+(ls.get(k)||0);if(seen>=T)return questIntro()||jIntro();ls.set(k,String(T));
-  const L=questsFor(T),y=T-1,yq=me&&y>=1&&questsFor(y)?qOk(y,me):null;if(L)ls.set(qiKey(),"1");const jNew=jOn(T)&&!ls.get(jiKey());if(jOn(T))ls.set(jiKey(),"1");
+  const L=questsFor(T),y=T-1,yq=me&&y>=1&&questsFor(y)?qOk(y,me):null;if(L)ls.set(qiKey(),"1");const jNew=jOn(T)&&!ls.get(jiKey());
   SFX.bzzt();
   modal(`<div class="win-h"><span><i class="dia"></i>Systemmeldung</span><span class="chip">Neu</span></div>
    <div class="nd-big glitch" style="--d:300ms">TAG ${T}</div><h2 class="mt8">wurde freigeschaltet</h2>
@@ -629,19 +647,31 @@ function newDayCheck(){
    ${yq===false?`<div class="potmsg"><b>+${eur(QFINE)}</b><div class="small muted">Strafe: Daily Quest von Tag ${y} nicht erfüllt.</div></div>`:yq===true?`<div class="tip" style="border-left-color:var(--ok)"><b style="color:var(--ok)">Tag ${y}</b>Daily Quest erfüllt – keine Strafe.</div>`:""}
    ${me&&jOn(y)?(jqOk(y,me)?`<div class="tip" style="border-left-color:var(--ok)"><b style="color:var(--ok)">Tag ${y}</b>Journal & To-Dos erledigt – keine Strafe.</div>`:`<div class="potmsg"><b>+${eur(JFINE)}</b><div class="small muted">Strafe: ${!jOk(y,me)&&!tdOk(y,me)?"Journal und To-Do-Liste":!jOk(y,me)?"Journal":"To-Do-Liste"} von Tag ${y} fehlt.</div></div>`):""}
    ${me&&jOn(y)&&tdFill(y,me)?`<div class="tip"><b>Deine To-Dos für heute</b>${tdFill(y,me)} Aufgaben von gestern warten – jede erledigte = +${TDXP} XP.</div>`:""}
-   ${jNew?`<div class="tip"><b>Neue Quests ab heute</b>Journal: eine ganze Seite (${JWORDS} Wörter) · ${TDN} To-Dos für morgen, beides ab ${JOPEN}:00 Uhr. Je = Level Up · eins fehlt = ${eur(JFINE)} in den Topf.</div>`:""}
+   ${jNew?`<div class="tip"><b>Woche 3 beginnt</b>Neue Quests freigeschaltet – gleich kommt die Erklärung.</div>`:""}
    ${L?`<div class="tip"><b>Neue Daily Quest</b>${L.map(q=>q.g+" "+esc(q.n)).join(" · ")}<br><span class="muted small">Alles geschafft = Level Up · sonst ${eur(QFINE)} in den Topf.</span></div>`:""}
    <button class="btn primary block mt12" data-act="opennew" data-d="${T}">Öffnen</button>`);return true}
 const qiKey=()=>"nnn.qintro."+roomId, jiKey=()=>"nnn.jintro."+roomId;
 function jIntro(){
   if(!state||!me||$("#modal").innerHTML)return false;const T=dayIndex();if(!jOn(T)||ls.get(jiKey()))return false;ls.set(jiKey(),"1");
   SFX.bzzt();
+  const pen=`<svg class="ji-ico" viewBox="0 0 48 48"><rect x="9" y="5" width="30" height="38" rx="3"/><path class="ji-ln" style="--i:0" d="M15 15h18"/><path class="ji-ln" style="--i:1" d="M15 21h18"/><path class="ji-ln" style="--i:2" d="M15 27h18"/><path class="ji-ln" style="--i:3" d="M15 33h11"/></svg>`;
+  const chk=`<svg class="ji-ico" viewBox="0 0 48 48">${[0,1,2].map(i=>`<rect x="8" y="${8+i*12}" width="8" height="8" rx="2"/><path class="ji-ck" style="--i:${i}" d="M9.5 ${12+i*12}l2 2 3.5-4"/><path d="M21 ${12+i*12}h19" class="ji-tx"/>`).join("")}</svg>`;
+  const ben=(i,h,t,src)=>`<div class="ji-b" style="--i:${i}"><b>${h}</b>${t}<span class="src">${src}</span></div>`;
   modal(`<div class="win-h"><span><i class="dia"></i>Systemmeldung</span><span class="chip">Woche 3</span></div>
-   <div class="nd-big glitch" style="--d:300ms;font-size:40px">NEUE QUESTS</div><h2 class="mt8">Journal & To-Do · ab Tag ${JSTART}</h2>
-   <p class="muted small" style="margin-bottom:0">Zusätzlich zur Daily Quest bekommt jeder Spieler ab jetzt jeden Tag:</p>
-   <ul><li><b>Journal</b> – eine ganze Seite schreiben (mind. ${JWORDS} Wörter, die App zählt mit)</li><li><b>To-Do-Liste</b> – ${TDN} Aufgaben für morgen eintragen</li></ul><p class="muted small" style="margin-top:0">Beides wird jeden Tag erst ab ${JOPEN}:00 Uhr freigeschaltet. Abhaken geht den ganzen Tag.</p>
-   <div class="tip"><b>Belohnung</b>Journal = Level Up · To-Do-Liste = Level Up. Am nächsten Tag bringt jedes erledigte To-Do +${TDXP} XP (alle ${TDN} = 1 Level). Nicht erledigt = keine Strafe.</div>
-   <div class="tip" style="border-left-color:var(--bad)"><b style="color:var(--bad)">Strafe</b>Journal oder To-Do-Liste bis 24:00 Uhr nicht geschafft → ${eur(JFINE)} in den Topf. Auch wenn beides fehlt: nur ${eur(JFINE)} pro Tag.</div>
+   <div class="nd-big glitch" style="--d:300ms;font-size:40px">NEUE QUESTS</div><h2 class="mt8">Woche 3 · Geist des Spielers</h2>
+   <p class="muted small" style="margin:0">Zusätzlich zur Daily Quest – jeden Tag, freigeschaltet ab <b>${JOPEN}:00 Uhr</b>:</p>
+   <div class="ji-q">
+    <div class="ji-c" style="--i:0">${pen}<div><b>Journal</b>Eine ganze Seite schreiben – mind. ${JWORDS} Wörter, die App zählt mit.<span class="ji-r">+1 Level</span></div></div>
+    <div class="ji-c" style="--i:1">${chk}<div><b>To-Do-Liste</b>${TDN} Aufgaben für morgen eintragen. Morgen abhaken: +${TDXP} XP pro To-Do.<span class="ji-r">+1 Level</span></div></div>
+   </div>
+   <div class="ji-h">Was bringt's?</div>
+   <div class="ji-bs">
+    ${ben(0,"Kopf frei","Gedanken und Gefühle aufzuschreiben senkte in Studien Stress und Grübeln – die Effekte sind klein bis mittel, aber gut belegt.","Expressives Schreiben, Pennebaker; Meta-Analyse Smyth 1998")}
+    ${ben(1,"Drang wird schwächer","Ein Gefühl in Worte zu fassen dämpft messbar die Reaktion im Gehirn – wer schreibt, was er fühlt, hat es eher im Griff.","Affect Labeling, Lieberman u. a. 2007 (Hirnscan-Studie)")}
+    ${ben(2,"Morgen ist schon geplant","Konkrete Pläne („morgen mache ich X“) erhöhen deutlich die Chance, Ziele wirklich umzusetzen.","Implementation Intentions, Meta-Analyse Gollwitzer & Sheeran 2006")}
+    ${ben(3,"Schneller einschlafen","Wer abends seine To-Dos für morgen aufschrieb, schlief in einer kleinen Studie schneller ein.","Scullin u. a. 2018, kleine Schlaflabor-Studie (57 Personen)")}
+   </div>
+   <div class="tip" style="border-left-color:var(--bad)"><b style="color:var(--bad)">Strafe</b>Journal oder To-Do-Liste bis 24:00 Uhr nicht geschafft → ${eur(JFINE)} in den Topf. Auch wenn beides fehlt: nur ${eur(JFINE)} pro Tag. Unerledigte To-Dos kosten nichts.</div>
    <button class="btn primary block mt16" data-act="jaccept">Quests annehmen</button>`,"qintro");return true}
 function questIntro(){
   if(!state||!me||$("#modal").innerHTML)return false;const T=dayIndex(),L=questsFor(T);if(!L||T>30||ls.get(qiKey()))return false;ls.set(qiKey(),"1");
@@ -1213,7 +1243,7 @@ document.addEventListener("click",async ev=>{
   if(a==="closebg"){if(ev.target===b)closeModal();return}
   if(a==="tab"){if(view===b.dataset.v&&view!=="day")return;view=b.dataset.v;if(view==="day")selDay=Math.min(Math.max(dayIndex(),1),30);render(true);scrollTo(0,0)}
   else if(a==="goday"){selDay=+b.dataset.d;view="day";render(true);scrollTo(0,0)}
-  else if(a==="opennew"){closeModal();selDay=+b.dataset.d;view="day";render(true);scrollTo(0,0)}
+  else if(a==="opennew"){closeModal();setTimeout(()=>jIntro(),700);selDay=+b.dataset.d;view="day";render(true);scrollTo(0,0)}
   else if(a==="prev"){if(selDay>1){selDay--;render(true)}}
   else if(a==="next"){if(selDay<30){selDay++;render(true)}}
   else if(a==="reveal"){const d=+b.dataset.d,k=b.dataset.k;SFX.bzzt();b.classList.add("revealing");b.removeAttribute("data-act");
