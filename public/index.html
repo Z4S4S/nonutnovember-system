@@ -536,6 +536,7 @@ const QSTART=QWEEKS[0].from, QFINE=10, QBONUS=5, QCAP=10;
    Eins davon (oder beides) nicht geschafft → JFINE € (einmal pro Tag). Am nächsten Tag: jedes erledigte To-Do = TDXP XP, unerledigt = keine Strafe. */
 const JSTART=15, JWORDS=250, JFINE=25, TDN=5, TDXP=20, JOPEN=18; // JOPEN: Journal & To-Do-Liste erst ab 18:00 Uhr (Abhaken jederzeit)
 const API="/.netlify/functions/sync";
+const APPV="2026-11-15a"; // bei jeder Änderung hochzählen – alte, im Hintergrund offene Apps laden sich dann selbst neu
 const K={room:"nnn.room",theme:"nnn.theme",me:id=>"nnn.me."+id,st:id=>"nnn.state."+id};
 const qs=new URLSearchParams(location.search);
 
@@ -650,9 +651,9 @@ function newDayCheck(){
    ${jNew?`<div class="tip"><b>Woche 3 beginnt</b>Neue Quests freigeschaltet – gleich kommt die Erklärung.</div>`:""}
    ${L?`<div class="tip"><b>Neue Daily Quest</b>${L.map(q=>q.g+" "+esc(q.n)).join(" · ")}<br><span class="muted small">Alles geschafft = Level Up · sonst ${eur(QFINE)} in den Topf.</span></div>`:""}
    <button class="btn primary block mt12" data-act="opennew" data-d="${T}">Öffnen</button>`);return true}
-const qiKey=()=>"nnn.qintro."+roomId, jiKey=()=>"nnn.jintro."+roomId;
-function jIntro(){
-  if(!state||!me||$("#modal").innerHTML)return false;const T=dayIndex();if(!jOn(T)||ls.get(jiKey()))return false;ls.set(jiKey(),"1");
+const qiKey=()=>"nnn.qintro."+roomId, jiKey=()=>"nnn.jintro2."+roomId;
+function jIntro(force){
+  if(!state||!me||$("#modal").innerHTML)return false;const T=dayIndex();if(!force&&(!jOn(T)||ls.get(jiKey())))return false;ls.set(jiKey(),"1");
   SFX.bzzt();
   const pen=`<svg class="ji-ico" viewBox="0 0 48 48"><rect x="9" y="5" width="30" height="38" rx="3"/><path class="ji-ln" style="--i:0" d="M15 15h18"/><path class="ji-ln" style="--i:1" d="M15 21h18"/><path class="ji-ln" style="--i:2" d="M15 27h18"/><path class="ji-ln" style="--i:3" d="M15 33h11"/></svg>`;
   const chk=`<svg class="ji-ico" viewBox="0 0 48 48">${[0,1,2].map(i=>`<rect x="8" y="${8+i*12}" width="8" height="8" rx="2"/><path class="ji-ck" style="--i:${i}" d="M9.5 ${12+i*12}l2 2 3.5-4"/><path d="M21 ${12+i*12}h19" class="ji-tx"/>`).join("")}</svg>`;
@@ -1114,7 +1115,7 @@ function vJQ(d){
      <div class="qrules"><div class="rew ${ok?"got":""}"><b>Belohnung${ok?" ✓":""}</b>Journal = Level Up · ${TDN} To-Dos eingetragen = Level Up. Am nächsten Tag: +${TDXP} XP je erledigtem To-Do.</div>
      <div class="pen ${past&&!ok?"paid":""}"><b>Strafe${past&&!ok?` · +${eur(JFINE)} fällig`:""}</b>${past?(ok?"Abgewendet – beides erledigt.":`${!jo&&!to?"Journal und To-Dos fehlen":!jo?"Journal fehlt":"To-Dos fehlen"} – ${eur(JFINE)} gehen in den Topf.`):`Freigeschaltet ab ${JOPEN}:00 Uhr. Journal oder To-Do-Liste bis 24:00 Uhr nicht geschafft → ${eur(JFINE)} in den Topf (auch wenn beides fehlt: nur ${eur(JFINE)}).`}</div></div>
      ${past?'<div class="hint">Nachtragen geht – der Ehrenkodex gilt.</div>':""}</div>`}
-  return h+`</section>`}
+  return h+`<div style="text-align:center;margin-top:10px"><button class="linkbtn" data-act="jhelp">Erklärung ansehen</button></div></section>`}
 
 function vLog(){
   const T=dayIndex(),last=T===0?0:Math.min(T,30);
@@ -1263,6 +1264,7 @@ document.addEventListener("click",async ev=>{
     if(val==="clean"){const T=dayIndex(),df=attrDiff(before,after);if(d===T)lvlUp(p,before.lv,after.lv,rankOf(before.streak).r!==rankOf(after.streak).r,df);else{SFX.open();toast("Bestätigt",`Tag ${d} für ${nm(p)} als standhaft eingetragen.`);if(df.length)statPop(df)}}
     else if(val==="relapse"){SFX.down();mRelapse(p,d)}}
   else if(a==="lf"){logFilter=b.dataset.f;render()}
+  else if(a==="jhelp"){SFX.open();jIntro(true)}
   else if(a==="gojq"||a==="jaccept"){closeModal();if(view!=="status"){view="status";render(true)}SFX.open();setTimeout(()=>{const q=document.getElementById("jquest");if(q)q.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"})},60)}
   else if(a==="tdc"){const d=+b.dataset.d,p=b.dataset.p,i=+b.dataset.i,T=dayIndex();if(!(T>d)||(me&&p!==me))return;const l=tdList(d,p);if(!l[i]||!l[i].x.trim())return;
     const before=calc(p);l[i].c=l[i].c?0:1;upd(d,p,{td:l,tdt:Date.now()});const after=calc(p);render();
@@ -1326,12 +1328,17 @@ function jInput(t){
 function setTheme(t){document.documentElement.dataset.theme=t;ls.set(K.theme,t);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="dark"?"#04060d":"#edf3fb"}
 
 /* ================= Loop ================= */
-let loopOn=false,lastJL=null;
+let loopOn=false,lastJL=null,updT=0;
+// Neue Version auf dem Server? → neu laden (iOS hält Home-Bildschirm-Apps sonst tagelang mit altem Code offen)
+async function checkUpdate(){if(Date.now()-updT<20000)return;updT=Date.now();
+  try{const r=await fetch(location.pathname+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)return;const m=(await r.text()).match(/const APPV="([^"]+)"/);
+    if(m&&m[1]!==APPV){if(isTyping()||$("#modal").innerHTML||qDrag){updT=0;setTimeout(checkUpdate,30000);return}if(dirty)await push();location.reload()}}catch(e){}}
 function startLoop(){if(loopOn)return;loopOn=true;
   setInterval(()=>{if(!state)return;const tgt=cdTarget();document.querySelectorAll("[data-cd]").forEach(el=>{el.textContent=tgt?fmtDur(tgt-now()):""});document.querySelectorAll("[data-cdj]").forEach(el=>{el.textContent=fmtDur(jOpenAt()-now())});const jl=jLocked(dayIndex());if(jl!==lastJL){if(lastJL!==null)safeRender();lastJL=jl}if(dayIndex()!==lastT){safeRender();setTimeout(newDayCheck,300)}},1000);
   setInterval(()=>{if(document.visibilityState!=="visible")return;document.querySelectorAll(".noise").forEach(el=>{el.textContent=noise(3)})},120);
   setInterval(()=>{if(state&&document.visibilityState==="visible")pull()},15000);
-  document.addEventListener("visibilitychange",()=>{if(state&&document.visibilityState==="visible")pull()});
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){checkUpdate();if(state)pull()}});
+  setInterval(checkUpdate,5*60*1000);checkUpdate();
   window.addEventListener("online",()=>{if(state)pull()})}
 
 /* ================= Start ================= */
